@@ -25,6 +25,7 @@
 - Common context merge from multiple AI tool sessions
 - Visual common-context map with a north-star handoff direction
 - Editable project north star that carries into exported handoff files
+- Korean/English language toggle for international judges and users
 - Browser-only saved context pieces for demo continuity
 - Session summary, decisions, proposed ideas, open questions, next actions
 - Handoff markdown export
@@ -38,6 +39,10 @@
 Live demo:
 
 [https://context-boradori.vercel.app](https://context-boradori.vercel.app)
+
+English view:
+
+[https://context-boradori.vercel.app/?lang=en](https://context-boradori.vercel.app/?lang=en)
 
 ## Brand Identity
 

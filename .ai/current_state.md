@@ -5,7 +5,7 @@ Updated by: Codex
 
 ## Status
 
-Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, enhanced with a visual north-star context map, and tightened so the north-star map is visible in the first viewport.
+Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, enhanced with a visual north-star context map, tightened so the north-star map is visible in the first viewport, and now supports Korean/English UI switching.
 
 ## Confirmed decisions
 
@@ -41,6 +41,8 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Merged outputs now include a `northStar` field.
 - The UI shows a visual common-context map near the top of the workspace, connecting source tools, the north star, key decisions/questions/actions, and the target AI tool.
 - Users can edit the project north star, and the same sentence is used in the map plus handoff/agent exports.
+- Users can toggle the main demo UI between Korean and English; `?lang=en` opens directly in English for judges.
+- English mode includes translated hero/workspace/map/result UI, English sample contexts, English mock fallback text, and English handoff section headings.
 
 ## Not started / future
 
@@ -53,3 +55,4 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - MCP integration
 - Browser QA for clipboard/download behavior across browsers
 - Product-flow screenshots for README
+- Full bilingual README rewrite

@@ -20,6 +20,7 @@
 - [x] Improve main workspace UX with Pencil MCP design-system references
 - [x] Add visual common-context map with north-star alignment
 - [x] Add editable north-star goal input and include it in exports
+- [x] Add Korean/English language toggle for demo UI
 - [ ] Add local IndexedDB storage
 - [ ] Add stronger secret redaction before any future LLM call
 - [x] Add sample demo context variants
@@ -33,3 +34,4 @@
 - [ ] Add MCP/CLI handoff integration
 - [ ] Add conflict detection and resolution UI for competing AI tool suggestions
 - [ ] Turn the editable north star into a reusable project doctrine
+- [ ] Rewrite README as a fully bilingual submission page

@@ -5,6 +5,8 @@ import type {
   ContextPiece,
   SourceTool,
 } from "@/lib/compression";
+import type { Locale } from "@/lib/i18n";
+import { uiText } from "@/lib/i18n";
 
 type ContextMapProps = {
   pieces: ContextPiece[];
@@ -12,19 +14,18 @@ type ContextMapProps = {
   targetTool: SourceTool;
   result: CompressionResult | null;
   northStar?: string;
+  locale: Locale;
 };
-
-function buildFallbackNorthStar(projectName: string, targetTool: SourceTool) {
-  const project = projectName.trim() || "Untitled project";
-
-  return `${targetTool}에서 ${project}의 확정된 방향을 지키며 다음 액션까지 이어갑니다.`;
-}
 
 function stripBulletPrefix(line: string) {
   return line.replace(/^[-*#>\d.)\s]+/, "").trim();
 }
 
-function extractPreviewLines(text: string | undefined, limit = 2) {
+function extractPreviewLines(
+  text: string | undefined,
+  ignorePattern: RegExp,
+  limit = 2,
+) {
   if (!text) {
     return [];
   }
@@ -33,7 +34,7 @@ function extractPreviewLines(text: string | undefined, limit = 2) {
     .split(/\r?\n/)
     .map(stripBulletPrefix)
     .filter(Boolean)
-    .filter((line) => !/찾지 못했습니다|아직 입력되지 않았습니다/.test(line))
+    .filter((line) => !ignorePattern.test(line))
     .slice(0, limit);
 }
 
@@ -75,43 +76,53 @@ export function ContextMap({
   targetTool,
   result,
   northStar: pinnedNorthStar,
+  locale,
 }: ContextMapProps) {
+  const text = uiText[locale].contextMap;
   const distribution = sourceDistribution(pieces);
   const sources = Object.entries(distribution);
+  const project = projectName.trim() || text.untitledProject;
   const northStar =
     pinnedNorthStar?.trim() ||
     result?.northStar ||
-    buildFallbackNorthStar(projectName, targetTool);
-  const decisions = extractPreviewLines(result?.confirmedDecisions);
-  const questions = extractPreviewLines(result?.openQuestions);
-  const actions = extractPreviewLines(result?.nextActions);
+    text.fallbackNorthStar(project, targetTool);
+  const decisions = extractPreviewLines(
+    result?.confirmedDecisions,
+    text.ignorePattern,
+  );
+  const questions = extractPreviewLines(
+    result?.openQuestions,
+    text.ignorePattern,
+  );
+  const actions = extractPreviewLines(result?.nextActions, text.ignorePattern);
 
   return (
     <section
       className="rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] p-3 shadow-sm sm:p-4"
-      aria-label="공통맥락 지도"
+      aria-label={text.ariaLabel}
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8A5CF6]">
-            Shared context map
+            {text.eyebrow}
           </p>
           <h3 className="mt-1 text-lg font-bold text-[#2D185D]">
-            공통맥락 지도
+            {text.title}
           </h3>
           <p className="mt-1 text-sm leading-6 text-[#6B6B7B]">
-            모든 소스 도구가 같은 북극성을 향하도록 맥락의 흐름을
-            시각화합니다.
+            {text.description}
           </p>
         </div>
         <span className="rounded-lg bg-white px-3 py-2 text-sm font-bold text-[#3b168c]">
-          {projectName.trim() || "Untitled project"}
+          {project}
         </span>
       </div>
 
       <div className="mt-3 grid gap-3 2xl:grid-cols-[0.82fr_1.25fr_0.82fr] 2xl:items-center">
         <div className="rounded-lg border border-[#E6E0FF] bg-white p-3">
-          <h4 className="text-sm font-bold text-[#2D185D]">소스 도구</h4>
+          <h4 className="text-sm font-bold text-[#2D185D]">
+            {text.sourceTools}
+          </h4>
           <div className="mt-3 flex flex-wrap gap-2">
             {sources.length > 0 ? (
               sources.map(([tool, count]) => (
@@ -124,7 +135,7 @@ export function ContextMap({
               ))
             ) : (
               <span className="text-sm leading-6 text-[#6B6B7B]">
-                아직 수집된 소스가 없습니다.
+                {text.noSources}
               </span>
             )}
           </div>
@@ -149,7 +160,7 @@ export function ContextMap({
               <circle cx="32" cy="32" r="7" fill="#6A46E2" />
             </svg>
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8A5CF6]">
-              North Star
+              {text.northStarLabel}
             </p>
             <p className="mt-2 text-sm font-bold leading-6 text-[#2D185D] sm:text-base">
               {northStar}
@@ -158,32 +169,33 @@ export function ContextMap({
         </div>
 
         <div className="rounded-lg border border-[#E6E0FF] bg-white p-3">
-          <h4 className="text-sm font-bold text-[#2D185D]">이어받을 도구</h4>
+          <h4 className="text-sm font-bold text-[#2D185D]">
+            {text.targetTool}
+          </h4>
           <div className="mt-3 rounded-lg bg-[#2D185D] px-3 py-4 text-center text-base font-bold text-white">
             {targetTool}
           </div>
           <p className="mt-3 text-sm leading-6 text-[#6B6B7B]">
-            이 도구는 북극성, 결정사항, 열린 질문, 다음 액션을 기준으로
-            이어받습니다.
+            {text.targetDescription}
           </p>
         </div>
       </div>
 
       <div className="mt-3 grid gap-3 md:grid-cols-3">
         <MapList
-          title="지켜야 할 결정"
+          title={text.decisionsTitle}
           items={decisions}
-          fallback="병합 후 확정된 결정이 이곳에 표시됩니다."
+          fallback={text.decisionsFallback}
         />
         <MapList
-          title="흔들릴 수 있는 질문"
+          title={text.questionsTitle}
           items={questions}
-          fallback="확인할 질문이 있으면 이곳에 표시됩니다."
+          fallback={text.questionsFallback}
         />
         <MapList
-          title="다음 항로"
+          title={text.actionsTitle}
           items={actions}
-          fallback="다음 액션이 정리되면 이곳에 표시됩니다."
+          fallback={text.actionsFallback}
         />
       </div>
     </section>

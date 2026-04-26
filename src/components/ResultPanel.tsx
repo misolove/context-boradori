@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { CopyButton } from "@/components/CopyButton";
 import type { CompressionResult } from "@/lib/compression";
+import type { Locale } from "@/lib/i18n";
+import { uiText } from "@/lib/i18n";
 import { downloadMarkdownFile } from "@/lib/markdown";
 
 type ResultPanelProps = {
@@ -11,23 +13,28 @@ type ResultPanelProps = {
   description?: string;
   downloads?: ResultDownload[];
   initialSection?: keyof CompressionResult;
+  locale?: Locale;
 };
 
-const resultSections: Array<{
+function getResultSections(locale: Locale): Array<{
   key: keyof CompressionResult;
   title: string;
-}> = [
-  { key: "northStar", title: "북극성" },
-  { key: "sessionSummary", title: "세션 요약" },
-  { key: "confirmedDecisions", title: "확정된 결정사항" },
-  { key: "proposedIdeas", title: "제안되었지만 확정되지 않은 내용" },
-  { key: "openQuestions", title: "열린 질문" },
-  { key: "nextActions", title: "다음 액션" },
-  { key: "handoffMarkdown", title: "다음 AI를 위한 Handoff" },
-  { key: "agentsMd", title: "AGENTS.md export" },
-  { key: "claudeMd", title: "CLAUDE.md export" },
-  { key: "geminiMd", title: "GEMINI.md export" },
-];
+}> {
+  const sections = uiText[locale].result.sections;
+
+  return [
+    { key: "northStar", title: sections.northStar },
+    { key: "sessionSummary", title: sections.sessionSummary },
+    { key: "confirmedDecisions", title: sections.confirmedDecisions },
+    { key: "proposedIdeas", title: sections.proposedIdeas },
+    { key: "openQuestions", title: sections.openQuestions },
+    { key: "nextActions", title: sections.nextActions },
+    { key: "handoffMarkdown", title: sections.handoffMarkdown },
+    { key: "agentsMd", title: sections.agentsMd },
+    { key: "claudeMd", title: sections.claudeMd },
+    { key: "geminiMd", title: sections.geminiMd },
+  ];
+}
 
 type ResultDownload = {
   key: keyof CompressionResult;
@@ -43,11 +50,16 @@ const defaultDownloads: ResultDownload[] = [
 
 export function ResultPanel({
   result,
-  title = "압축 결과",
-  description = "모든 결과는 브라우저에서 만든 mock 정리본입니다.",
+  title,
+  description,
   downloads = defaultDownloads,
   initialSection = "sessionSummary",
+  locale = "ko",
 }: ResultPanelProps) {
+  const text = uiText[locale].result;
+  const resultSections = getResultSections(locale);
+  const panelTitle = title ?? text.defaultTitle;
+  const panelDescription = description ?? text.defaultDescription;
   const [activeKey, setActiveKey] =
     useState<keyof CompressionResult>(initialSection);
   const activeSection =
@@ -56,12 +68,12 @@ export function ResultPanel({
   const activeContent = result[activeSection.key];
 
   return (
-    <section className="space-y-4" aria-label="압축 결과">
+    <section className="space-y-4" aria-label={text.ariaLabel}>
       <div className="rounded-lg border border-[#E6E0FF] bg-[#F7F4FF] p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-bold text-[#2D185D]">{title}</h2>
-            <p className="text-sm text-[#6B6B7B]">{description}</p>
+            <h2 className="text-lg font-bold text-[#2D185D]">{panelTitle}</h2>
+            <p className="text-sm text-[#6B6B7B]">{panelDescription}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:flex">
             {downloads.map((download) => (
@@ -107,7 +119,11 @@ export function ResultPanel({
             <h3 className="text-base font-bold text-[#2D185D]">
               {activeSection.title}
             </h3>
-            <CopyButton text={activeContent} />
+            <CopyButton
+              text={activeContent}
+              label={text.copy}
+              copiedLabel={text.copied}
+            />
           </div>
           <pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-[#E6E0FF] bg-white p-4 font-mono text-xs leading-6 text-[#333333]">
             {activeContent}

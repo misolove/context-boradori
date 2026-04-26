@@ -10,11 +10,16 @@ import {
   generateMergedCompression,
   generateMockCompression,
 } from "@/lib/compression";
+import type { Locale } from "@/lib/i18n";
+import { uiText } from "@/lib/i18n";
 
 const STORAGE_KEY = "context-boradori-context-pieces-v1";
 const NORTH_STAR_STORAGE_KEY = "context-boradori-north-star-v1";
-const defaultNorthStar =
-  "확정된 결정은 지키고, 열린 질문은 분리하며, 다음 AI가 같은 방향으로 이어서 실행하게 만든다.";
+const locales: Locale[] = ["ko", "en"];
+const defaultNorthStars: Record<Locale, string> = {
+  ko: uiText.ko.context.defaultNorthStar,
+  en: uiText.en.context.defaultNorthStar,
+};
 
 const sourceTools: SourceTool[] = [
   "ChatGPT",
@@ -26,46 +31,85 @@ const sourceTools: SourceTool[] = [
   "Other",
 ];
 
-const sampleContext = `프로젝트: 맥락 보라돌이
+const sampleContext: Record<Locale, string> = {
+  ko: `프로젝트: 맥락 보라돌이
 결정: MVP는 실제 LLM API 없이 mock compression으로 먼저 만든다.
 confirmed: public hackathon repo이므로 API key와 raw private context는 저장하지 않는다.
 제안: 나중에 Vercel AI SDK streamText()로 실제 압축을 붙일 수 있다.
 TODO: 붙여넣기 폼, 결과 패널, handoff.md 다운로드를 구현해야 한다.
 다음: Vercel에 배포해서 데모 링크를 확보한다.
 브랜드: 보라돌이는 맥락을 모으고, 이해하고, 압축하고, 연결하는 AI context librarian이다.
-열린 질문: IndexedDB 저장은 MVP에 포함할까?`;
+열린 질문: IndexedDB 저장은 MVP에 포함할까?`,
+  en: `Project: Context Boradori
+Decision: The MVP should use mock compression first, without a real LLM API.
+confirmed: Because this is a public hackathon repo, API keys and raw private context should not be stored.
+Proposal: Later, real compression can be added with the Vercel AI SDK streamText() flow.
+TODO: Implement paste form, result panels, and handoff.md downloads.
+Next: Deploy to Vercel and secure a live demo link.
+Brand: Boradori is an AI context librarian that collects, understands, compresses, and connects context.
+Open question: Should IndexedDB storage be part of the MVP?`,
+};
 
-const parallelSamples: Array<{
+const parallelSamples: Record<Locale, Array<{
   title: string;
   sourceTool: SourceTool;
   rawContext: string;
-}> = [
-  {
-    title: "ChatGPT 기획 맥락",
-    sourceTool: "ChatGPT",
-    rawContext: `프로젝트: 맥락 보라돌이
+}>> = {
+  ko: [
+    {
+      title: "ChatGPT 기획 맥락",
+      sourceTool: "ChatGPT",
+      rawContext: `프로젝트: 맥락 보라돌이
 결정: 제품 핵심은 여러 AI 도구의 작업 맥락을 공통 프로젝트 기억으로 합치는 것이다.
 제안: 화면에는 모으다, 이해하다, 압축하다, 연결하다 흐름을 명확히 보여준다.
 TODO: 해커톤 제출용으로 GitHub repo, live demo, backup demo video를 준비해야 한다.
 열린 질문: raw context를 어디까지 브라우저에 저장할 수 있을까?`,
-  },
-  {
-    title: "Codex 구현 맥락",
-    sourceTool: "Codex",
-    rawContext: `confirmed: MVP는 Next.js App Router, TypeScript, Tailwind CSS로 구현한다.
+    },
+    {
+      title: "Codex 구현 맥락",
+      sourceTool: "Codex",
+      rawContext: `confirmed: MVP는 Next.js App Router, TypeScript, Tailwind CSS로 구현한다.
 결정: 외부 AI API와 유료 DB 없이 브라우저에서 mock compression을 실행한다.
 TODO: copy/download 버튼, AGENTS.md export, CLAUDE.md export, GEMINI.md export를 유지한다.
 다음: 여러 source tool의 압축 결과를 병합하는 common context flow를 추가한다.`,
-  },
-  {
-    title: "Claude 리뷰 맥락",
-    sourceTool: "Claude",
-    rawContext: `제안: 공통맥락 병합 결과에는 확정된 결정과 미확정 아이디어를 분리해서 보여준다.
+    },
+    {
+      title: "Claude 리뷰 맥락",
+      sourceTool: "Claude",
+      rawContext: `제안: 공통맥락 병합 결과에는 확정된 결정과 미확정 아이디어를 분리해서 보여준다.
 확인 필요: GitHub를 DB처럼 쓰는 대신 public repo에는 정제된 handoff만 export하는 편이 안전하다?
 next: 대상 도구를 선택하면 ChatGPT, Codex, Claude, Gemini에 맞는 handoff copy를 생성한다.
 idea: 나중에 충돌 감지와 diff view를 붙이면 병렬 AI 작업 관리가 더 강해진다.`,
-  },
-];
+    },
+  ],
+  en: [
+    {
+      title: "ChatGPT planning context",
+      sourceTool: "ChatGPT",
+      rawContext: `Project: Context Boradori
+Decision: The core product is merging work context from multiple AI tools into shared project memory.
+Proposal: The screen should clearly show the flow: collect, understand, compress, connect.
+TODO: Prepare GitHub repo, live demo, and backup demo video for hackathon submission.
+Open question: How much raw context should be stored in the browser?`,
+    },
+    {
+      title: "Codex implementation context",
+      sourceTool: "Codex",
+      rawContext: `confirmed: The MVP uses Next.js App Router, TypeScript, and Tailwind CSS.
+Decision: Run mock compression in the browser without external AI APIs or paid databases.
+TODO: Keep copy/download buttons plus AGENTS.md, CLAUDE.md, and GEMINI.md exports working.
+Next: Add a common context flow that merges compressed results from multiple source tools.`,
+    },
+    {
+      title: "Claude review context",
+      sourceTool: "Claude",
+      rawContext: `Proposal: The merged common context should separate confirmed decisions from unconfirmed ideas.
+Open question: Instead of using GitHub as a database, should public repos only receive cleaned handoff exports?
+next: When the target tool is selected, generate handoff copy for ChatGPT, Codex, Claude, or Gemini.
+idea: Conflict detection and diff views would make parallel AI work management stronger later.`,
+    },
+  ],
+};
 
 const mergedDownloads = [
   { key: "handoffMarkdown" as const, filename: "common-handoff.md" },
@@ -88,6 +132,7 @@ function createContextPiece(
   rawContext: string,
   title: string,
   northStar: string,
+  locale: Locale,
 ): ContextPiece {
   return {
     id: createPieceId(),
@@ -100,6 +145,7 @@ function createContextPiece(
       sourceTool,
       rawContext,
       northStar,
+      locale,
     }),
   };
 }
@@ -123,14 +169,14 @@ function isStoredContextPiece(value: unknown): value is ContextPiece {
   );
 }
 
-function formatCreatedAt(value: string) {
+function formatCreatedAt(value: string, locale: Locale) {
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return "방금";
+    return uiText[locale].context.justNow;
   }
 
-  return new Intl.DateTimeFormat("ko-KR", {
+  return new Intl.DateTimeFormat(locale === "ko" ? "ko-KR" : "en-US", {
     month: "short",
     day: "numeric",
     hour: "2-digit",
@@ -148,11 +194,18 @@ function previewSummary(result: CompressionResult) {
   return `${compact.slice(0, 180).trim()}...`;
 }
 
-export function ContextForm() {
+type ContextFormProps = {
+  locale: Locale;
+};
+
+export function ContextForm({ locale }: ContextFormProps) {
+  const text = uiText[locale].context;
+  const numberLocale = locale === "ko" ? "ko-KR" : "en-US";
   const [projectName, setProjectName] = useState("맥락 보라돌이");
   const [sourceTool, setSourceTool] = useState<SourceTool>("Codex");
   const [targetTool, setTargetTool] = useState<SourceTool>("Codex");
-  const [projectNorthStar, setProjectNorthStar] = useState(defaultNorthStar);
+  const [projectNorthStars, setProjectNorthStars] =
+    useState<Record<Locale, string>>(defaultNorthStars);
   const [rawContext, setRawContext] = useState("");
   const [result, setResult] = useState<CompressionResult | null>(null);
   const [contextPieces, setContextPieces] = useState<ContextPiece[]>([]);
@@ -170,7 +223,8 @@ export function ContextForm() {
       contextPieces.reduce((total, piece) => total + piece.characterCount, 0),
     [contextPieces],
   );
-  const effectiveNorthStar = projectNorthStar.trim();
+  const projectNorthStar = projectNorthStars[locale];
+  const effectiveNorthStar = projectNorthStar.trim() || text.defaultNorthStar;
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -187,16 +241,27 @@ export function ContextForm() {
           }
         }
 
-        const storedNorthStar = window.localStorage.getItem(
-          NORTH_STAR_STORAGE_KEY,
+        const storedNorthStars = locales.reduce<Partial<Record<Locale, string>>>(
+          (values, nextLocale) => {
+            const storedNorthStar = window.localStorage.getItem(
+              `${NORTH_STAR_STORAGE_KEY}-${nextLocale}`,
+            );
+
+            if (storedNorthStar?.trim()) {
+              values[nextLocale] = storedNorthStar;
+            }
+
+            return values;
+          },
+          {},
         );
 
-        if (storedNorthStar?.trim()) {
-          setProjectNorthStar(storedNorthStar);
-        }
+        setProjectNorthStars((current) => ({
+          ...current,
+          ...storedNorthStars,
+        }));
       } catch {
         window.localStorage.removeItem(STORAGE_KEY);
-        window.localStorage.removeItem(NORTH_STAR_STORAGE_KEY);
       } finally {
         setIsHydrated(true);
       }
@@ -204,6 +269,24 @@ export function ContextForm() {
 
     return () => window.clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setProjectName((currentProjectName) => {
+        if (locale === "en" && currentProjectName === "맥락 보라돌이") {
+          return "Context Boradori";
+        }
+
+        if (locale === "ko" && currentProjectName === "Context Boradori") {
+          return "맥락 보라돌이";
+        }
+
+        return currentProjectName;
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [locale]);
 
   useEffect(() => {
     if (!isHydrated) {
@@ -230,12 +313,14 @@ export function ContextForm() {
       return;
     }
 
+    const northStarStorageKey = `${NORTH_STAR_STORAGE_KEY}-${locale}`;
+
     try {
-      window.localStorage.setItem(NORTH_STAR_STORAGE_KEY, projectNorthStar);
+      window.localStorage.setItem(northStarStorageKey, projectNorthStar);
     } catch {
-      window.localStorage.removeItem(NORTH_STAR_STORAGE_KEY);
+      window.localStorage.removeItem(northStarStorageKey);
     }
-  }, [projectNorthStar, isHydrated]);
+  }, [projectNorthStar, isHydrated, locale]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -245,6 +330,7 @@ export function ContextForm() {
         sourceTool,
         rawContext,
         northStar: effectiveNorthStar,
+        locale,
       }),
     );
   }
@@ -264,8 +350,9 @@ export function ContextForm() {
       projectName,
       sourceTool,
       rawContext,
-      `${sourceTool} 맥락 ${contextPieces.length + 1}`,
+      text.pieceTitle(sourceTool, contextPieces.length + 1),
       effectiveNorthStar,
+      locale,
     );
 
     setContextPieces((pieces) => [nextPiece, ...pieces].slice(0, 12));
@@ -275,13 +362,14 @@ export function ContextForm() {
   }
 
   function handleLoadParallelSamples() {
-    const samplePieces = parallelSamples.map((sample) =>
+    const samplePieces = parallelSamples[locale].map((sample) =>
       createContextPiece(
         projectName,
         sample.sourceTool,
         sample.rawContext,
         sample.title,
         effectiveNorthStar,
+        locale,
       ),
     );
 
@@ -298,6 +386,7 @@ export function ContextForm() {
         targetTool,
         pieces: [...contextPieces].reverse(),
         northStar: effectiveNorthStar,
+        locale,
       }),
     );
   }
@@ -325,22 +414,27 @@ export function ContextForm() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8A5CF6]">
-              Context workspace
+              {text.workspaceLabel}
             </p>
             <h2 className="mt-2 text-2xl font-bold text-[#2D185D]">
-              맥락 작업대
+              {text.workspaceTitle}
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6B6B7B]">
-              여러 AI 도구에서 나온 맥락을 조각으로 모으고, 다음 도구가
-              이어받을 공통 handoff로 정리합니다.
+              {text.workspaceDescription}
             </p>
           </div>
 
           <dl className="grid grid-cols-3 gap-2 text-center sm:min-w-[21rem]">
             {[
-              ["조각", contextPieces.length.toLocaleString("ko-KR")],
-              ["수집 문자", totalPieceCharacters.toLocaleString("ko-KR")],
-              ["대상", targetTool],
+              [
+                text.metrics.pieces,
+                contextPieces.length.toLocaleString(numberLocale),
+              ],
+              [
+                text.metrics.characters,
+                totalPieceCharacters.toLocaleString(numberLocale),
+              ],
+              [text.metrics.target, targetTool],
             ].map(([label, value]) => (
               <div
                 key={label}
@@ -359,9 +453,9 @@ export function ContextForm() {
 
         <ol className="mt-4 grid gap-2 sm:grid-cols-3">
           {[
-            ["01", "붙여넣기", characterCount > 0],
-            ["02", "수집함", contextPieces.length > 0],
-            ["03", "Handoff", Boolean(mergedResult)],
+            ["01", text.steps[0], characterCount > 0],
+            ["02", text.steps[1], contextPieces.length > 0],
+            ["03", text.steps[2], Boolean(mergedResult)],
           ].map(([step, label, isActive]) => (
             <li
               key={step.toString()}
@@ -382,18 +476,22 @@ export function ContextForm() {
         <div className="grid gap-3 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-start">
           <label className="space-y-2 rounded-lg border border-[#E6E0FF] bg-white p-3">
             <span className="text-sm font-bold text-[#3b168c]">
-              프로젝트 북극성
+              {text.northStarLabel}
             </span>
             <textarea
               value={projectNorthStar}
-              onChange={(event) => setProjectNorthStar(event.target.value)}
+              onChange={(event) =>
+                setProjectNorthStars((current) => ({
+                  ...current,
+                  [locale]: event.target.value,
+                }))
+              }
               rows={4}
               className="min-h-24 w-full rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] px-3 py-2 text-sm leading-6 text-[#333333] outline-none transition placeholder:text-[#9ca3af] focus:border-[#8A5CF6] focus:bg-white focus:ring-4 focus:ring-[#B094FF]/25"
-              placeholder={defaultNorthStar}
+              placeholder={text.defaultNorthStar}
             />
             <p className="text-xs leading-5 text-[#6B6B7B]">
-              이 문장이 공통맥락 지도와 모든 handoff export의 기준점이
-              됩니다.
+              {text.northStarHelp}
             </p>
           </label>
 
@@ -403,13 +501,12 @@ export function ContextForm() {
             targetTool={targetTool}
             result={mergedResult}
             northStar={effectiveNorthStar}
+            locale={locale}
           />
         </div>
 
         <div className="rounded-lg border border-[#FFC857] bg-[#FFF8DE] p-3 text-sm leading-6 text-[#624600]">
-          API 키, 비밀번호, 토큰, 개인 금융정보는 붙여넣지 마세요. 현재
-          데모는 외부 AI API를 호출하지 않고, 수집함은 이 브라우저에만
-          저장됩니다.
+          {text.securityNote}
         </div>
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,0.86fr)] xl:items-start">
@@ -420,33 +517,33 @@ export function ContextForm() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8A5CF6]">
-                  Source
+                  {text.sourceLabel}
                 </p>
                 <h3 className="mt-1 text-lg font-bold text-[#2D185D]">
-                  소스 맥락
+                  {text.sourceTitle}
                 </h3>
               </div>
               <span className="rounded-lg bg-[#F5F1FF] px-3 py-2 font-mono text-xs font-bold text-[#3b168c]">
-                {characterCount.toLocaleString("ko-KR")} chars
+                {characterCount.toLocaleString(numberLocale)} {text.chars}
               </span>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-[1.15fr_0.85fr]">
               <label className="space-y-2">
                 <span className="text-sm font-semibold text-[#3b168c]">
-                  프로젝트 이름
+                  {text.projectNameLabel}
                 </span>
                 <input
                   value={projectName}
                   onChange={(event) => setProjectName(event.target.value)}
                   className="h-11 w-full rounded-lg border border-[#E6E0FF] bg-white px-4 text-[#333333] outline-none transition focus:border-[#8A5CF6] focus:ring-4 focus:ring-[#B094FF]/25"
-                  placeholder="예: 맥락 보라돌이"
+                  placeholder={text.projectNamePlaceholder}
                 />
               </label>
 
               <label className="space-y-2">
                 <span className="text-sm font-semibold text-[#3b168c]">
-                  출처 AI 도구
+                  {text.sourceToolLabel}
                 </span>
                 <select
                   value={sourceTool}
@@ -466,21 +563,20 @@ export function ContextForm() {
 
             <label className="block space-y-2">
               <span className="text-sm font-semibold text-[#3b168c]">
-                Raw context
+                {text.rawContextLabel}
               </span>
               <textarea
                 value={rawContext}
                 onChange={(event) => setRawContext(event.target.value)}
                 rows={10}
                 className="min-h-56 w-full rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] px-4 py-3 text-sm leading-6 text-[#333333] outline-none transition placeholder:text-[#9ca3af] focus:border-[#8A5CF6] focus:bg-white focus:ring-4 focus:ring-[#B094FF]/25"
-                placeholder="여기에 ChatGPT, Claude, Codex, Gemini의 작업 맥락을 붙여넣으세요."
+                placeholder={text.rawContextPlaceholder}
               />
             </label>
 
             {characterCount > 12000 ? (
               <p className="rounded-lg border border-[#ffb0c6] bg-[#fff1f5] p-3 text-sm text-[#9f1239]">
-                맥락이 꽤 깁니다. MVP mock 압축은 앞부분과 규칙 기반
-                라인을 중심으로 정리합니다.
+                {text.longContextWarning}
               </p>
             ) : null}
 
@@ -491,20 +587,20 @@ export function ContextForm() {
                 disabled={characterCount === 0}
                 className="h-11 rounded-lg bg-[#6A46E2] px-4 text-sm font-bold text-white shadow-[0_12px_26px_rgba(106,70,226,0.22)] transition hover:bg-[#5A32C8] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/40"
               >
-                공통맥락에 추가
+                {text.addToCommon}
               </button>
               <button
                 type="submit"
                 className="h-11 rounded-lg bg-[#2D185D] px-4 text-sm font-bold text-white transition hover:bg-[#201044] focus:outline-none focus:ring-4 focus:ring-[#B094FF]/40"
               >
-                미리보기 압축
+                {text.previewCompression}
               </button>
               <button
                 type="button"
-                onClick={() => setRawContext(sampleContext)}
+                onClick={() => setRawContext(sampleContext[locale])}
                 className="h-11 rounded-lg border border-[#E6E0FF] bg-white px-4 text-sm font-bold text-[#3b168c] transition hover:bg-[#F5F1FF] focus:outline-none focus:ring-4 focus:ring-[#B094FF]/25"
               >
-                샘플 불러오기
+                {text.loadSample}
               </button>
               <button
                 type="button"
@@ -512,7 +608,7 @@ export function ContextForm() {
                 disabled={characterCount === 0 && result === null}
                 className="h-11 rounded-lg border border-[#E6E0FF] bg-white px-4 text-sm font-bold text-[#6B6B7B] transition hover:bg-[#F5F1FF] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/25"
               >
-                입력 비우기
+                {text.clearInput}
               </button>
             </div>
           </form>
@@ -521,24 +617,24 @@ export function ContextForm() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8A5CF6]">
-                  Common tray
+                  {text.commonTrayLabel}
                 </p>
                 <h3 className="mt-1 text-lg font-bold text-[#2D185D]">
-                  공통맥락 수집함
+                  {text.commonTrayTitle}
                 </h3>
               </div>
               <span
                 className="rounded-lg bg-white px-3 py-2 text-sm font-bold text-[#3b168c]"
                 aria-live="polite"
               >
-                {contextPieces.length.toLocaleString("ko-KR")}개
+                {contextPieces.length.toLocaleString(numberLocale)}
               </span>
             </div>
 
             <div className="grid gap-3">
               <label className="space-y-2">
                 <span className="text-sm font-semibold text-[#3b168c]">
-                  넘겨줄 대상 AI 도구
+                  {text.targetToolLabel}
                 </span>
                 <select
                   value={targetTool}
@@ -562,22 +658,21 @@ export function ContextForm() {
                   disabled={contextPieces.length === 0}
                   className="h-11 rounded-lg bg-[#6A46E2] px-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#5A32C8] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/40"
                 >
-                  공통맥락 병합
+                  {text.mergeCommon}
                 </button>
                 <button
                   type="button"
                   onClick={handleLoadParallelSamples}
                   className="h-11 rounded-lg border border-[#8DE5B4] bg-[#ECFFF5] px-4 text-sm font-bold text-[#126B42] transition hover:bg-[#D9FFEA] focus:outline-none focus:ring-4 focus:ring-[#8DE5B4]/30"
                 >
-                  병렬 샘플 추가
+                  {text.addParallelSamples}
                 </button>
               </div>
             </div>
 
             {contextPieces.length === 0 ? (
               <div className="rounded-lg border border-dashed border-[#B094FF] bg-white p-5 text-sm leading-6 text-[#6B6B7B]">
-                아직 수집된 맥락이 없습니다. 샘플을 추가하거나 왼쪽 입력을
-                공통맥락에 추가해보세요.
+                {text.emptyTray}
               </div>
             ) : (
               <div className="space-y-3">
@@ -594,8 +689,11 @@ export function ContextForm() {
                               {piece.sourceTool}
                             </span>
                             <span className="text-xs font-semibold text-[#6B6B7B]">
-                              {piece.characterCount.toLocaleString("ko-KR")}{" "}
-                              chars · {formatCreatedAt(piece.createdAt)}
+                              {piece.characterCount.toLocaleString(
+                                numberLocale,
+                              )}{" "}
+                              {text.chars} ·{" "}
+                              {formatCreatedAt(piece.createdAt, locale)}
                             </span>
                           </div>
                           <h4 className="mt-2 truncate text-sm font-bold text-[#2D185D]">
@@ -607,7 +705,7 @@ export function ContextForm() {
                           onClick={() => handleRemoveContextPiece(piece.id)}
                           className="h-8 shrink-0 rounded-lg border border-[#FFB0C6] bg-white px-3 text-xs font-bold text-[#9F1239] transition hover:bg-[#FFF1F5] focus:outline-none focus:ring-4 focus:ring-[#FFB0C6]/25"
                         >
-                          삭제
+                          {text.delete}
                         </button>
                       </div>
                       <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#56536B]">
@@ -621,7 +719,7 @@ export function ContextForm() {
                   onClick={handleClearContextPieces}
                   className="h-10 w-full rounded-lg border border-[#E6E0FF] bg-white px-4 text-sm font-bold text-[#6B6B7B] transition hover:bg-[#F5F1FF] focus:outline-none focus:ring-4 focus:ring-[#B094FF]/25"
                 >
-                  수집함 비우기
+                  {text.clearTray}
                 </button>
               </div>
             )}
@@ -631,21 +729,24 @@ export function ContextForm() {
         {mergedResult ? (
           <ResultPanel
             result={mergedResult}
-            title="공통맥락 병합 결과"
-            description={`${contextPieces.length.toLocaleString(
-              "ko-KR",
-            )}개 맥락 조각을 ${targetTool}에 넘기기 위한 mock handoff입니다.`}
+            title={text.mergedTitle}
+            description={text.mergedDescription(
+              contextPieces.length.toLocaleString(numberLocale),
+              targetTool,
+            )}
             downloads={mergedDownloads}
             initialSection="handoffMarkdown"
+            locale={locale}
           />
         ) : null}
 
         {result ? (
           <ResultPanel
             result={result}
-            title="현재 조각 압축 결과"
-            description="현재 입력 또는 최근 추가된 맥락 조각의 mock 정리본입니다."
+            title={text.pieceResultTitle}
+            description={text.pieceResultDescription}
             initialSection="sessionSummary"
+            locale={locale}
           />
         ) : null}
       </div>

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "맥락 보라돌이 | Context Boradori",
   description:
-    "흩어진 AI 작업 맥락을 정리하고 다음 AI에게 넘겨주는 개인 컨텍스트 허브",
+    "흩어진 AI 작업 맥락을 정리하고 다음 AI에게 넘겨주는 개인 컨텍스트 허브. A local-first AI context hub for handoffs across tools.",
 };
 
 export default function RootLayout({
