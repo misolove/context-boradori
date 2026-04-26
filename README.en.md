@@ -95,17 +95,38 @@ The shared project memory lives in `.ai/`:
 - `.ai/decisions/`
 - `.ai/handoffs/`
 
-## Roadmap
+## Future Expansion
 
-- Browser click-through QA for sample context, merge, copy, and downloads
-- Product-flow screenshots for README
-- Conflict detection between AI tool suggestions
-- IndexedDB-based local persistence
+After the hackathon MVP, the goal is not simply to add more features. The goal is to improve the **handoff quality** so the next AI tool can trust and continue the work immediately.
+
+### 1. Handoff Quality
+
+- Tool-specific handoff formats for ChatGPT, Claude, Codex, and Gemini
+- Stricter separation of confirmed decisions, proposed ideas, open questions, and next actions
+- Conflict detection when different AI tools suggest competing directions
+- Turn the editable north star into a reusable project doctrine
+
+### 2. Memory And Common-Context Map
+
+- IndexedDB-based local project storage
+- Compare previous handoffs with the current one
+- Show decisions, questions, conflicts, and next actions as visual nodes in the common-context map
+- Private-first workflow where the user controls whether raw context is stored
+
+### 3. Integrations
+
+- Optional real LLM compression
+- Streaming result UI with the Vercel AI SDK
+- GitHub issue, PR, and export workflows
+- CLI/MCP handoff for Codex, Claude Code, and Gemini CLI
+- Longer-term Chrome extension or clipboard helper for easier context collection
+
+### 4. Trust And Safety
+
 - Stronger secret redaction
-- Real compression route with Vercel AI SDK
-- Streaming result UI
-- GitHub PR/export workflow
-- MCP or CLI integrations for agent handoff
+- Better detection for API keys, tokens, DB URLs, and private URLs
+- Redaction preview and explicit user consent before any external AI API call
+- Keep the public-repo safety principle: do not store raw context in a public repository
 
 ## License
 

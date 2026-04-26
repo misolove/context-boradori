@@ -95,17 +95,38 @@ npm audit --omit=dev
 - `.ai/decisions/`
 - `.ai/handoffs/`
 
-## 로드맵
+## 향후 확장
 
-- 샘플 맥락, 병합, 복사, 다운로드에 대한 브라우저 클릭 QA
-- README용 product-flow 스크린샷 추가
-- AI 도구 간 제안 충돌 감지
-- IndexedDB 기반 로컬 저장
+해커톤 MVP의 다음 목표는 기능을 무작정 늘리는 것이 아니라, **다음 AI가 믿고 이어받을 수 있는 handoff 품질**을 높이는 것입니다.
+
+### 1. Handoff 품질
+
+- 대상 도구별 handoff 최적화: ChatGPT, Claude, Codex, Gemini가 바로 실행하기 좋은 형식으로 분리
+- 확정된 결정, 미확정 아이디어, 열린 질문, 다음 액션을 더 엄격하게 분류
+- 여러 AI 도구가 서로 다른 제안을 했을 때 충돌 의견을 감지하고 비교
+- 북극성을 재사용 가능한 프로젝트 doctrine으로 발전
+
+### 2. 기억과 공통맥락지도
+
+- IndexedDB 기반 프로젝트별 로컬 저장
+- 이전 handoff와 현재 handoff 비교
+- 공통맥락지도에서 결정, 질문, 충돌, 다음 액션을 시각 노드로 표시
+- raw context 저장 여부를 사용자가 선택하는 private-first workflow
+
+### 3. 연결성
+
+- 선택형 실제 LLM compression 추가
+- Vercel AI SDK 기반 streaming result UI
+- GitHub issue/PR/export workflow
+- Codex, Claude Code, Gemini CLI가 이어받기 쉬운 CLI/MCP handoff
+- 장기적으로 Chrome extension 또는 clipboard helper를 통한 맥락 수집 자동화
+
+### 4. 신뢰와 보안
+
 - 더 강한 secret redaction
-- Vercel AI SDK 기반 실제 압축 route
-- Streaming result UI
-- GitHub PR/export workflow
-- MCP 또는 CLI 기반 agent handoff 연동
+- API key, token, DB URL, private URL 탐지 강화
+- 외부 AI API 호출 전 redaction preview와 명시적 사용자 동의
+- public repo에 raw context를 저장하지 않는 안전한 export 원칙 유지
 
 ## 라이선스
 
