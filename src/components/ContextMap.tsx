@@ -11,10 +11,14 @@ type ContextMapProps = {
   projectName: string;
   targetTool: SourceTool;
   result: CompressionResult | null;
+  northStar?: string;
 };
 
-const fallbackNorthStar =
-  "먼저 공통맥락을 병합하면, 이곳에 다음 AI가 따라갈 북극성이 표시됩니다.";
+function buildFallbackNorthStar(projectName: string, targetTool: SourceTool) {
+  const project = projectName.trim() || "Untitled project";
+
+  return `${targetTool}에서 ${project}의 확정된 방향을 지키며 다음 액션까지 이어갑니다.`;
+}
 
 function stripBulletPrefix(line: string) {
   return line.replace(/^[-*#>\d.)\s]+/, "").trim();
@@ -70,17 +74,21 @@ export function ContextMap({
   projectName,
   targetTool,
   result,
+  northStar: pinnedNorthStar,
 }: ContextMapProps) {
   const distribution = sourceDistribution(pieces);
   const sources = Object.entries(distribution);
-  const northStar = result?.northStar ?? fallbackNorthStar;
+  const northStar =
+    pinnedNorthStar?.trim() ||
+    result?.northStar ||
+    buildFallbackNorthStar(projectName, targetTool);
   const decisions = extractPreviewLines(result?.confirmedDecisions);
   const questions = extractPreviewLines(result?.openQuestions);
   const actions = extractPreviewLines(result?.nextActions);
 
   return (
     <section
-      className="rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] p-4 shadow-sm"
+      className="rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] p-3 shadow-sm sm:p-4"
       aria-label="공통맥락 지도"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -101,7 +109,7 @@ export function ContextMap({
         </span>
       </div>
 
-      <div className="mt-4 grid gap-3 lg:grid-cols-[0.82fr_1.25fr_0.82fr] lg:items-center">
+      <div className="mt-3 grid gap-3 2xl:grid-cols-[0.82fr_1.25fr_0.82fr] 2xl:items-center">
         <div className="rounded-lg border border-[#E6E0FF] bg-white p-3">
           <h4 className="text-sm font-bold text-[#2D185D]">소스 도구</h4>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -123,11 +131,11 @@ export function ContextMap({
         </div>
 
         <div className="relative overflow-hidden rounded-lg border border-[#B094FF] bg-white p-4 text-center">
-          <div className="pointer-events-none absolute left-6 right-6 top-1/2 hidden h-px bg-[#DCCBFF] lg:block" />
-          <div className="relative mx-auto flex min-h-44 max-w-md flex-col items-center justify-center rounded-lg border border-[#E6E0FF] bg-[#F7F4FF] p-5 shadow-sm">
+          <div className="pointer-events-none absolute left-6 right-6 top-1/2 hidden h-px bg-[#DCCBFF] 2xl:block" />
+          <div className="relative mx-auto flex min-h-36 max-w-md flex-col items-center justify-center rounded-lg border border-[#E6E0FF] bg-[#F7F4FF] p-4 shadow-sm">
             <svg
               aria-hidden="true"
-              className="mb-3 h-12 w-12"
+              className="mb-2 h-10 w-10"
               viewBox="0 0 64 64"
               fill="none"
             >
@@ -143,7 +151,7 @@ export function ContextMap({
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8A5CF6]">
               North Star
             </p>
-            <p className="mt-2 text-base font-bold leading-7 text-[#2D185D]">
+            <p className="mt-2 text-sm font-bold leading-6 text-[#2D185D] sm:text-base">
               {northStar}
             </p>
           </div>

@@ -19,6 +19,7 @@ export type CompressionInput = {
   projectName: string;
   sourceTool: SourceTool;
   rawContext: string;
+  northStar?: string;
 };
 
 export type CompressionCore = {
@@ -50,6 +51,7 @@ export type MergeInput = {
   projectName: string;
   targetTool: SourceTool;
   pieces: ContextPiece[];
+  northStar?: string;
 };
 
 const decisionPattern = /(결정|확정|confirmed|decided|decision)/i;
@@ -131,7 +133,15 @@ function buildSummary(input: CompressionInput, redactedContext: string) {
 ${excerpt}`;
 }
 
-function buildNorthStar(projectName: string, targetTool?: SourceTool) {
+function buildNorthStar(
+  projectName: string,
+  targetTool?: SourceTool,
+  northStar?: string,
+) {
+  if (northStar?.trim()) {
+    return northStar.trim();
+  }
+
   const project = projectName.trim() || "Untitled project";
   const target = targetTool ? `${targetTool}에서 ` : "";
 
@@ -145,7 +155,11 @@ export function generateMockCompression(
   const lines = normalizeLines(redactedContext);
 
   const base: CompressionCore = {
-    northStar: buildNorthStar(input.projectName, input.sourceTool),
+    northStar: buildNorthStar(
+      input.projectName,
+      input.sourceTool,
+      input.northStar,
+    ),
     sessionSummary: buildSummary(input, redactedContext),
     confirmedDecisions: toBulletList(
       extractLines(lines, decisionPattern),
@@ -190,7 +204,11 @@ export function generateMergedCompression(input: MergeInput): CompressionResult 
           .join("\n");
 
   const base: CompressionCore = {
-    northStar: buildNorthStar(projectName, input.targetTool),
+    northStar: buildNorthStar(
+      projectName,
+      input.targetTool,
+      input.northStar,
+    ),
     sessionSummary: `${projectName}의 공통맥락입니다. ${pieces.length.toLocaleString(
       "ko-KR",
     )}개의 AI 작업 맥락을 모아 ${input.targetTool}에서 이어받을 수 있는 형태로 병합했습니다.

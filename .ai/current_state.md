@@ -5,7 +5,7 @@ Updated by: Codex
 
 ## Status
 
-Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, and enhanced with a visual north-star context map.
+Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, enhanced with a visual north-star context map, and tightened so the north-star map is visible in the first viewport.
 
 ## Confirmed decisions
 
@@ -32,14 +32,15 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Vercel project connected to `misolove/context-boradori`
 - Brand images added under `public/brand/`
 - UI palette and copy aligned with the generated brand boards
-- Changing the source AI tool clears stale compression results but preserves raw context; users can explicitly clear input with `입력 비우기`.
+- Changing the source AI tool clears stale raw context and compression results so pasted context does not accidentally stay attached to the wrong tool.
 - Users can add compressed context pieces from multiple source tools into a common context tray.
 - The tray can be merged into a common handoff for a selected target AI tool.
 - Demo sample button can add three parallel context pieces from ChatGPT, Codex, and Claude.
-- Context pieces are stored in browser `localStorage` for demo continuity; no server or GitHub DB is used.
+- Context pieces and the editable project north star are stored in browser `localStorage` for demo continuity; no server or GitHub DB is used.
 - Pencil MCP design-system references were used to reshape the main UI around a clearer workspace header, compact stats, source/tray panels, and tabbed result previews.
 - Merged outputs now include a `northStar` field.
-- The UI shows a visual common-context map connecting source tools, the north star, key decisions/questions/actions, and the target AI tool.
+- The UI shows a visual common-context map near the top of the workspace, connecting source tools, the north star, key decisions/questions/actions, and the target AI tool.
+- Users can edit the project north star, and the same sentence is used in the map plus handoff/agent exports.
 
 ## Not started / future
 
@@ -47,7 +48,7 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Vercel AI SDK streaming
 - IndexedDB persistence
 - Stronger conflict detection between parallel AI tool sessions
-- Editable north-star goal input
+- Reusable project doctrine built from the editable north star
 - GitHub PR export
 - MCP integration
 - Browser QA for clipboard/download behavior across browsers

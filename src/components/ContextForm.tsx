@@ -12,6 +12,9 @@ import {
 } from "@/lib/compression";
 
 const STORAGE_KEY = "context-boradori-context-pieces-v1";
+const NORTH_STAR_STORAGE_KEY = "context-boradori-north-star-v1";
+const defaultNorthStar =
+  "확정된 결정은 지키고, 열린 질문은 분리하며, 다음 AI가 같은 방향으로 이어서 실행하게 만든다.";
 
 const sourceTools: SourceTool[] = [
   "ChatGPT",
@@ -84,6 +87,7 @@ function createContextPiece(
   sourceTool: SourceTool,
   rawContext: string,
   title: string,
+  northStar: string,
 ): ContextPiece {
   return {
     id: createPieceId(),
@@ -95,6 +99,7 @@ function createContextPiece(
       projectName,
       sourceTool,
       rawContext,
+      northStar,
     }),
   };
 }
@@ -147,6 +152,7 @@ export function ContextForm() {
   const [projectName, setProjectName] = useState("맥락 보라돌이");
   const [sourceTool, setSourceTool] = useState<SourceTool>("Codex");
   const [targetTool, setTargetTool] = useState<SourceTool>("Codex");
+  const [projectNorthStar, setProjectNorthStar] = useState(defaultNorthStar);
   const [rawContext, setRawContext] = useState("");
   const [result, setResult] = useState<CompressionResult | null>(null);
   const [contextPieces, setContextPieces] = useState<ContextPiece[]>([]);
@@ -164,6 +170,7 @@ export function ContextForm() {
       contextPieces.reduce((total, piece) => total + piece.characterCount, 0),
     [contextPieces],
   );
+  const effectiveNorthStar = projectNorthStar.trim();
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -179,8 +186,17 @@ export function ContextForm() {
             );
           }
         }
+
+        const storedNorthStar = window.localStorage.getItem(
+          NORTH_STAR_STORAGE_KEY,
+        );
+
+        if (storedNorthStar?.trim()) {
+          setProjectNorthStar(storedNorthStar);
+        }
       } catch {
         window.localStorage.removeItem(STORAGE_KEY);
+        window.localStorage.removeItem(NORTH_STAR_STORAGE_KEY);
       } finally {
         setIsHydrated(true);
       }
@@ -209,6 +225,18 @@ export function ContextForm() {
     }
   }, [contextPieces, isHydrated]);
 
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(NORTH_STAR_STORAGE_KEY, projectNorthStar);
+    } catch {
+      window.localStorage.removeItem(NORTH_STAR_STORAGE_KEY);
+    }
+  }, [projectNorthStar, isHydrated]);
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setResult(
@@ -216,12 +244,14 @@ export function ContextForm() {
         projectName,
         sourceTool,
         rawContext,
+        northStar: effectiveNorthStar,
       }),
     );
   }
 
   function handleSourceToolChange(nextSourceTool: SourceTool) {
     setSourceTool(nextSourceTool);
+    setRawContext("");
     setResult(null);
   }
 
@@ -235,6 +265,7 @@ export function ContextForm() {
       sourceTool,
       rawContext,
       `${sourceTool} 맥락 ${contextPieces.length + 1}`,
+      effectiveNorthStar,
     );
 
     setContextPieces((pieces) => [nextPiece, ...pieces].slice(0, 12));
@@ -250,6 +281,7 @@ export function ContextForm() {
         sample.sourceTool,
         sample.rawContext,
         sample.title,
+        effectiveNorthStar,
       ),
     );
 
@@ -265,6 +297,7 @@ export function ContextForm() {
         projectName,
         targetTool,
         pieces: [...contextPieces].reverse(),
+        northStar: effectiveNorthStar,
       }),
     );
   }
@@ -288,7 +321,7 @@ export function ContextForm() {
 
   return (
     <div className="overflow-hidden rounded-lg border border-white/80 bg-white/90 shadow-[0_24px_70px_rgba(106,70,226,0.18)] backdrop-blur">
-      <div className="border-b border-[#E6E0FF] bg-[#FCFAFF] p-4 sm:p-5 lg:p-6">
+      <div className="border-b border-[#E6E0FF] bg-[#FCFAFF] p-4 sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8A5CF6]">
@@ -324,7 +357,7 @@ export function ContextForm() {
           </dl>
         </div>
 
-        <ol className="mt-5 grid gap-2 sm:grid-cols-3">
+        <ol className="mt-4 grid gap-2 sm:grid-cols-3">
           {[
             ["01", "붙여넣기", characterCount > 0],
             ["02", "수집함", contextPieces.length > 0],
@@ -345,7 +378,34 @@ export function ContextForm() {
         </ol>
       </div>
 
-      <div className="space-y-5 p-4 sm:p-5 lg:p-6">
+      <div className="space-y-5 p-4 sm:p-5">
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-start">
+          <label className="space-y-2 rounded-lg border border-[#E6E0FF] bg-white p-3">
+            <span className="text-sm font-bold text-[#3b168c]">
+              프로젝트 북극성
+            </span>
+            <textarea
+              value={projectNorthStar}
+              onChange={(event) => setProjectNorthStar(event.target.value)}
+              rows={4}
+              className="min-h-24 w-full rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] px-3 py-2 text-sm leading-6 text-[#333333] outline-none transition placeholder:text-[#9ca3af] focus:border-[#8A5CF6] focus:bg-white focus:ring-4 focus:ring-[#B094FF]/25"
+              placeholder={defaultNorthStar}
+            />
+            <p className="text-xs leading-5 text-[#6B6B7B]">
+              이 문장이 공통맥락 지도와 모든 handoff export의 기준점이
+              됩니다.
+            </p>
+          </label>
+
+          <ContextMap
+            pieces={contextPieces}
+            projectName={projectName}
+            targetTool={targetTool}
+            result={mergedResult}
+            northStar={effectiveNorthStar}
+          />
+        </div>
+
         <div className="rounded-lg border border-[#FFC857] bg-[#FFF8DE] p-3 text-sm leading-6 text-[#624600]">
           API 키, 비밀번호, 토큰, 개인 금융정보는 붙여넣지 마세요. 현재
           데모는 외부 AI API를 호출하지 않고, 수집함은 이 브라우저에만
@@ -567,15 +627,6 @@ export function ContextForm() {
             )}
           </section>
         </div>
-
-        {contextPieces.length > 0 ? (
-          <ContextMap
-            pieces={contextPieces}
-            projectName={projectName}
-            targetTool={targetTool}
-            result={mergedResult}
-          />
-        ) : null}
 
         {mergedResult ? (
           <ResultPanel

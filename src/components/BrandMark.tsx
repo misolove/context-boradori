@@ -1,9 +1,10 @@
 type BrandMarkProps = {
-  size?: "sm" | "lg";
+  size?: "sm" | "md" | "lg";
 };
 
 export function BrandMark({ size = "lg" }: BrandMarkProps) {
   const isSmall = size === "sm";
+  const isMedium = size === "md";
   const gradientId = isSmall ? "boradori-gradient-sm" : "boradori-gradient-lg";
 
   return (
@@ -11,7 +12,9 @@ export function BrandMark({ size = "lg" }: BrandMarkProps) {
       className={
         isSmall
           ? "relative h-11 w-11 shrink-0"
-          : "relative h-28 w-28 shrink-0 sm:h-32 sm:w-32"
+          : isMedium
+            ? "relative h-20 w-20 shrink-0 sm:h-24 sm:w-24"
+            : "relative h-28 w-28 shrink-0 sm:h-32 sm:w-32"
       }
       aria-label="맥락 보라돌이 브랜드 마크"
       role="img"
