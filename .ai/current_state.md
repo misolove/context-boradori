@@ -5,7 +5,7 @@ Updated by: Codex
 
 ## Status
 
-Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, enhanced with a visual north-star context map, tightened so the north-star map is visible in the first viewport, supports Korean/English UI switching, has GitHub-style README language links with Korean as the default, and now includes a Korean-first hackathon presentation deck.
+Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, enhanced with a visual north-star context map, tightened so the north-star map is visible in the first viewport, supports Korean/English UI switching, has GitHub-style README language links with Korean as the default, and now includes a Claude-polished Korean-first hackathon presentation deck.
 
 ## Confirmed decisions
 
@@ -49,9 +49,11 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Mock compression heuristics now avoid treating `Next.js` as a next action, avoid classifying proposal-prefixed lines as confirmed decisions, and remove English fallback text from merged handoffs.
 - Mobile layout is tightened so the common-context map starts inside a 390x844 first viewport and appears before the editable north-star textarea.
 - Hackathon presentation materials are available under `presentation/`.
-- The generated PPTX is `presentation/output/output.pptx`, with 9 slides covering problem, solution, product flow, live demo proof, usefulness, tech/safety, roadmap, and closing.
-- Presentation previews and a contact sheet are available under `presentation/scratch/previews/`.
-- Presentation QA passed with no package failures: 9 slides, 4 embedded PNG media files, no zero-byte media, no invalid PNG media, and no placeholder text detected.
+- The current PPTX is `presentation/output/output.pptx`, synced from the Claude-polished deck at `/Users/letitbe/Downloads/맥락보라돌이_해커톤_데모덱.pptx`.
+- The current deck has 9 slides covering problem, solution, product flow, live demo proof, usefulness, tech/safety, roadmap, and closing.
+- Presentation previews and a contact sheet remain available under `presentation/scratch/previews/`, but they were generated before the Claude-polished PPTX sync.
+- The Claude-polished PPTX package was verified with `unzip -t`; it has 9 slides, 31 media files, 0 zero-byte media files, and no compressed data errors.
+- Backup demo video with Korean/English hard subtitles was generated at `/Users/letitbe/Desktop/context-boradori-demo-subtitled.mp4`.
 
 ## Not started / future
 
@@ -63,4 +65,4 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - GitHub PR export
 - MCP integration
 - Product-flow screenshots for README
-- Backup demo video for submission safety
+- Updated rendered slide previews for the Claude-polished presentation deck
