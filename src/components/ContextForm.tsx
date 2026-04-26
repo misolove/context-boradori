@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { ContextMap } from "@/components/ContextMap";
 import { ResultPanel } from "@/components/ResultPanel";
 import {
   CompressionResult,
@@ -566,6 +567,15 @@ export function ContextForm() {
             )}
           </section>
         </div>
+
+        {contextPieces.length > 0 ? (
+          <ContextMap
+            pieces={contextPieces}
+            projectName={projectName}
+            targetTool={targetTool}
+            result={mergedResult}
+          />
+        ) : null}
 
         {mergedResult ? (
           <ResultPanel

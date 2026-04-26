@@ -23,6 +23,7 @@
 - Local mock compression
 - Multi-source context tray
 - Common context merge from multiple AI tool sessions
+- Visual common-context map with a north-star handoff direction
 - Browser-only saved context pieces for demo continuity
 - Session summary, decisions, proposed ideas, open questions, next actions
 - Handoff markdown export

@@ -17,6 +17,7 @@ const resultSections: Array<{
   key: keyof CompressionResult;
   title: string;
 }> = [
+  { key: "northStar", title: "북극성" },
   { key: "sessionSummary", title: "세션 요약" },
   { key: "confirmedDecisions", title: "확정된 결정사항" },
   { key: "proposedIdeas", title: "제안되었지만 확정되지 않은 내용" },

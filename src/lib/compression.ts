@@ -22,6 +22,7 @@ export type CompressionInput = {
 };
 
 export type CompressionCore = {
+  northStar: string;
   sessionSummary: string;
   confirmedDecisions: string;
   proposedIdeas: string;
@@ -130,6 +131,13 @@ function buildSummary(input: CompressionInput, redactedContext: string) {
 ${excerpt}`;
 }
 
+function buildNorthStar(projectName: string, targetTool?: SourceTool) {
+  const project = projectName.trim() || "Untitled project";
+  const target = targetTool ? `${targetTool}에서 ` : "";
+
+  return `${target}${project}의 확정된 방향을 지키면서, 흩어진 맥락을 하나의 공통 기억으로 연결하고 다음 액션까지 일관되게 이어간다.`;
+}
+
 export function generateMockCompression(
   input: CompressionInput,
 ): CompressionResult {
@@ -137,6 +145,7 @@ export function generateMockCompression(
   const lines = normalizeLines(redactedContext);
 
   const base: CompressionCore = {
+    northStar: buildNorthStar(input.projectName, input.sourceTool),
     sessionSummary: buildSummary(input, redactedContext),
     confirmedDecisions: toBulletList(
       extractLines(lines, decisionPattern),
@@ -181,6 +190,7 @@ export function generateMergedCompression(input: MergeInput): CompressionResult 
           .join("\n");
 
   const base: CompressionCore = {
+    northStar: buildNorthStar(projectName, input.targetTool),
     sessionSummary: `${projectName}의 공통맥락입니다. ${pieces.length.toLocaleString(
       "ko-KR",
     )}개의 AI 작업 맥락을 모아 ${input.targetTool}에서 이어받을 수 있는 형태로 병합했습니다.

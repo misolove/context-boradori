@@ -18,6 +18,7 @@
 
 - [ ] Run browser click-through QA for sample context, multi-source merge, copy, and downloads
 - [x] Improve main workspace UX with Pencil MCP design-system references
+- [x] Add visual common-context map with north-star alignment
 - [ ] Add local IndexedDB storage
 - [ ] Add stronger secret redaction before any future LLM call
 - [x] Add sample demo context variants
@@ -30,3 +31,4 @@
 - [ ] Add GitHub PR export later
 - [ ] Add MCP/CLI handoff integration
 - [ ] Add conflict detection and resolution UI for competing AI tool suggestions
+- [ ] Add editable north-star goal and reusable project doctrine

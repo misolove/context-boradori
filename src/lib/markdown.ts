@@ -7,6 +7,7 @@ type MarkdownInput = {
 };
 
 type MarkdownCore = {
+  northStar: string;
   sessionSummary: string;
   confirmedDecisions: string;
   proposedIdeas: string;
@@ -42,6 +43,9 @@ export function buildHandoffMarkdown(
 
 ## Source
 ${buildSourceBlock(input)}
+
+## 북극성
+${result.northStar}
 
 ## 세션 요약
 ${result.sessionSummary}
@@ -84,6 +88,10 @@ ${targetLine}
 - Separate confirmed decisions from ideas.
 - Never store secrets, API keys, credentials, tokens, private URLs, or private financial information.
 - Prefer small, reviewable changes.
+- Keep the north star visible when choosing the next action.
+
+## North Star
+${result.northStar}
 
 ## Confirmed Decisions
 ${result.confirmedDecisions}
@@ -104,6 +112,9 @@ Use this handoff as the latest shared project context${
     input.targetTool ? ` for ${input.targetTool}` : ""
   }.
 
+## North Star
+${result.northStar}
+
 ## Session Summary
 ${result.sessionSummary}
 
@@ -121,6 +132,9 @@ export function buildGeminiMd(input: MarkdownInput, result: MarkdownCore) {
 Use this project's handoff as the canonical context imported from ${input.sourceTool}${
     input.targetTool ? ` for ${input.targetTool}` : ""
   }.
+
+## North Star
+${result.northStar}
 
 ## Open Questions
 ${result.openQuestions}

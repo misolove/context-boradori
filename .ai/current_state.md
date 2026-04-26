@@ -5,7 +5,7 @@ Updated by: Codex
 
 ## Status
 
-Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, and refreshed with a more user-friendly workspace UX.
+Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, and enhanced with a visual north-star context map.
 
 ## Confirmed decisions
 
@@ -18,6 +18,7 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - First deployed demo URL: https://context-boradori.vercel.app
 - Brand direction: cute but smart AI context librarian using the "모으다 / 이해하다 / 압축하다 / 연결하다" motif
 - Product direction: multiple AI tool sessions should be collected into a shared common context, then exported for the next target AI tool.
+- Product direction: the common context should be visually understandable and should keep every follow-up tool aligned to a north star.
 
 ## Current implementation
 
@@ -37,6 +38,8 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Demo sample button can add three parallel context pieces from ChatGPT, Codex, and Claude.
 - Context pieces are stored in browser `localStorage` for demo continuity; no server or GitHub DB is used.
 - Pencil MCP design-system references were used to reshape the main UI around a clearer workspace header, compact stats, source/tray panels, and tabbed result previews.
+- Merged outputs now include a `northStar` field.
+- The UI shows a visual common-context map connecting source tools, the north star, key decisions/questions/actions, and the target AI tool.
 
 ## Not started / future
 
@@ -44,6 +47,7 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Vercel AI SDK streaming
 - IndexedDB persistence
 - Stronger conflict detection between parallel AI tool sessions
+- Editable north-star goal input
 - GitHub PR export
 - MCP integration
 - Browser QA for clipboard/download behavior across browsers
