@@ -5,7 +5,7 @@ Updated by: Codex
 
 ## Status
 
-Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, and extended with a multi-source common context flow.
+Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, and refreshed with a more user-friendly workspace UX.
 
 ## Confirmed decisions
 
@@ -36,6 +36,7 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - The tray can be merged into a common handoff for a selected target AI tool.
 - Demo sample button can add three parallel context pieces from ChatGPT, Codex, and Claude.
 - Context pieces are stored in browser `localStorage` for demo continuity; no server or GitHub DB is used.
+- Pencil MCP design-system references were used to reshape the main UI around a clearer workspace header, compact stats, source/tray panels, and tabbed result previews.
 
 ## Not started / future
 

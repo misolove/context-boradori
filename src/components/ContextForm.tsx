@@ -158,6 +158,11 @@ export function ContextForm() {
     () => rawContext.trim().length,
     [rawContext],
   );
+  const totalPieceCharacters = useMemo(
+    () =>
+      contextPieces.reduce((total, piece) => total + piece.characterCount, 0),
+    [contextPieces],
+  );
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -281,220 +286,288 @@ export function ContextForm() {
   }
 
   return (
-    <div className="rounded-lg border border-white/80 bg-white/85 p-4 shadow-[0_24px_70px_rgba(106,70,226,0.18)] backdrop-blur sm:p-5 lg:p-6">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="rounded-lg border border-[#FFC857] bg-[#FFF8DE] p-3 text-sm leading-6 text-[#624600]">
-          API 키, 비밀번호, 토큰, 개인 금융정보는 붙여넣지 마세요. 공개
-          repo에는 raw context를 저장하지 않는 것을 권장합니다. 현재 데모는
-          외부 AI API를 호출하지 않습니다.
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-[1.2fr_0.8fr]">
-          <label className="space-y-2">
-            <span className="text-sm font-semibold text-[#3b168c]">
-              프로젝트 이름
-            </span>
-            <input
-              value={projectName}
-              onChange={(event) => setProjectName(event.target.value)}
-              className="h-12 w-full rounded-lg border border-[#E6E0FF] bg-white px-4 text-[#333333] outline-none transition focus:border-[#8A5CF6] focus:ring-4 focus:ring-[#B094FF]/25"
-              placeholder="예: 맥락 보라돌이"
-            />
-          </label>
-
-          <label className="space-y-2">
-            <span className="text-sm font-semibold text-[#3b168c]">
-              출처 AI 도구
-            </span>
-            <select
-              value={sourceTool}
-              onChange={(event) =>
-                handleSourceToolChange(event.target.value as SourceTool)
-              }
-              className="h-12 w-full rounded-lg border border-[#E6E0FF] bg-white px-4 text-[#333333] outline-none transition focus:border-[#8A5CF6] focus:ring-4 focus:ring-[#B094FF]/25"
-            >
-              {sourceTools.map((tool) => (
-                <option key={tool} value={tool}>
-                  {tool}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        <label className="block space-y-2">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <span className="text-sm font-semibold text-[#3b168c]">
-              Raw context 붙여넣기
-            </span>
-            <span className="font-mono text-xs text-[#6B6B7B]">
-              {characterCount.toLocaleString("ko-KR")} chars
-            </span>
-          </div>
-          <textarea
-            value={rawContext}
-            onChange={(event) => setRawContext(event.target.value)}
-            rows={12}
-            className="min-h-64 w-full rounded-lg border border-[#E6E0FF] bg-white px-4 py-3 text-sm leading-6 text-[#333333] outline-none transition placeholder:text-[#9ca3af] focus:border-[#8A5CF6] focus:ring-4 focus:ring-[#B094FF]/25"
-            placeholder="여기에 ChatGPT, Claude, Codex, Gemini의 작업 맥락을 붙여넣으세요."
-          />
-        </label>
-
-        {characterCount > 12000 ? (
-          <p className="rounded-lg border border-[#ffb0c6] bg-[#fff1f5] p-3 text-sm text-[#9f1239]">
-            맥락이 꽤 깁니다. MVP mock 압축은 앞부분과 규칙 기반 라인을
-            중심으로 정리합니다.
-          </p>
-        ) : null}
-
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <button
-            type="submit"
-            className="h-12 rounded-lg bg-[#6A46E2] px-5 text-base font-bold text-white shadow-[0_14px_30px_rgba(106,70,226,0.28)] transition hover:bg-[#5A32C8] focus:outline-none focus:ring-4 focus:ring-[#B094FF]/40"
-          >
-            맥락 압축하기
-          </button>
-          <button
-            type="button"
-            onClick={handleAddContextPiece}
-            disabled={characterCount === 0}
-            className="h-12 rounded-lg bg-[#2D185D] px-5 text-base font-bold text-white shadow-[0_12px_26px_rgba(45,24,93,0.22)] transition hover:bg-[#201044] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/40"
-          >
-            공통맥락에 추가
-          </button>
-          <button
-            type="button"
-            onClick={() => setRawContext(sampleContext)}
-            className="h-12 rounded-lg border border-[#E6E0FF] bg-white px-5 text-base font-bold text-[#3b168c] transition hover:bg-[#F5F1FF] focus:outline-none focus:ring-4 focus:ring-[#B094FF]/25"
-          >
-            샘플 맥락 불러오기
-          </button>
-          <button
-            type="button"
-            onClick={handleClearContext}
-            disabled={characterCount === 0 && result === null}
-            className="h-12 rounded-lg border border-[#E6E0FF] bg-white px-5 text-base font-bold text-[#6B6B7B] transition hover:bg-[#F5F1FF] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/25"
-          >
-            입력 비우기
-          </button>
-        </div>
-      </form>
-
-      <section className="mt-6 space-y-4 border-t border-[#E6E0FF] pt-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div className="overflow-hidden rounded-lg border border-white/80 bg-white/90 shadow-[0_24px_70px_rgba(106,70,226,0.18)] backdrop-blur">
+      <div className="border-b border-[#E6E0FF] bg-[#FCFAFF] p-4 sm:p-5 lg:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <p className="text-sm font-semibold text-[#8A5CF6]">
-              Common context tray
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8A5CF6]">
+              Context workspace
             </p>
-            <h2 className="text-2xl font-bold text-[#2D185D]">
-              공통맥락 수집함
+            <h2 className="mt-2 text-2xl font-bold text-[#2D185D]">
+              맥락 작업대
             </h2>
-            <p className="mt-1 text-sm leading-6 text-[#6B6B7B]">
-              여러 도구에서 가져온 압축 조각을 모아 대상 AI가 이어받을
-              공통맥락으로 합칩니다. 수집함은 이 브라우저에만 저장됩니다.
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6B6B7B]">
+              여러 AI 도구에서 나온 맥락을 조각으로 모으고, 다음 도구가
+              이어받을 공통 handoff로 정리합니다.
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-[1fr_auto] lg:min-w-[31rem]">
-            <label className="space-y-2">
-              <span className="text-sm font-semibold text-[#3b168c]">
-                넘겨줄 대상 AI 도구
-              </span>
-              <select
-                value={targetTool}
-                onChange={(event) =>
-                  setTargetTool(event.target.value as SourceTool)
-                }
-                className="h-11 w-full rounded-lg border border-[#E6E0FF] bg-white px-3 text-[#333333] outline-none transition focus:border-[#8A5CF6] focus:ring-4 focus:ring-[#B094FF]/25"
+          <dl className="grid grid-cols-3 gap-2 text-center sm:min-w-[21rem]">
+            {[
+              ["조각", contextPieces.length.toLocaleString("ko-KR")],
+              ["수집 문자", totalPieceCharacters.toLocaleString("ko-KR")],
+              ["대상", targetTool],
+            ].map(([label, value]) => (
+              <div
+                key={label}
+                className="rounded-lg border border-[#E6E0FF] bg-white px-3 py-2"
               >
-                {sourceTools.map((tool) => (
-                  <option key={tool} value={tool}>
-                    {tool}
-                  </option>
-                ))}
-              </select>
+                <dt className="text-xs font-semibold text-[#6B6B7B]">
+                  {label}
+                </dt>
+                <dd className="mt-1 truncate text-sm font-bold text-[#3b168c]">
+                  {value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <ol className="mt-5 grid gap-2 sm:grid-cols-3">
+          {[
+            ["01", "붙여넣기", characterCount > 0],
+            ["02", "수집함", contextPieces.length > 0],
+            ["03", "Handoff", Boolean(mergedResult)],
+          ].map(([step, label, isActive]) => (
+            <li
+              key={step.toString()}
+              className={`rounded-lg border p-3 ${
+                isActive
+                  ? "border-[#8A5CF6] bg-[#F5F1FF]"
+                  : "border-[#E6E0FF] bg-white/70"
+              }`}
+            >
+              <p className="text-xs font-bold text-[#8A5CF6]">{step}</p>
+              <p className="mt-1 text-sm font-bold text-[#2D185D]">{label}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div className="space-y-5 p-4 sm:p-5 lg:p-6">
+        <div className="rounded-lg border border-[#FFC857] bg-[#FFF8DE] p-3 text-sm leading-6 text-[#624600]">
+          API 키, 비밀번호, 토큰, 개인 금융정보는 붙여넣지 마세요. 현재
+          데모는 외부 AI API를 호출하지 않고, 수집함은 이 브라우저에만
+          저장됩니다.
+        </div>
+
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,0.86fr)] xl:items-start">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 rounded-lg border border-[#E6E0FF] bg-white p-4"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8A5CF6]">
+                  Source
+                </p>
+                <h3 className="mt-1 text-lg font-bold text-[#2D185D]">
+                  소스 맥락
+                </h3>
+              </div>
+              <span className="rounded-lg bg-[#F5F1FF] px-3 py-2 font-mono text-xs font-bold text-[#3b168c]">
+                {characterCount.toLocaleString("ko-KR")} chars
+              </span>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-[1.15fr_0.85fr]">
+              <label className="space-y-2">
+                <span className="text-sm font-semibold text-[#3b168c]">
+                  프로젝트 이름
+                </span>
+                <input
+                  value={projectName}
+                  onChange={(event) => setProjectName(event.target.value)}
+                  className="h-11 w-full rounded-lg border border-[#E6E0FF] bg-white px-4 text-[#333333] outline-none transition focus:border-[#8A5CF6] focus:ring-4 focus:ring-[#B094FF]/25"
+                  placeholder="예: 맥락 보라돌이"
+                />
+              </label>
+
+              <label className="space-y-2">
+                <span className="text-sm font-semibold text-[#3b168c]">
+                  출처 AI 도구
+                </span>
+                <select
+                  value={sourceTool}
+                  onChange={(event) =>
+                    handleSourceToolChange(event.target.value as SourceTool)
+                  }
+                  className="h-11 w-full rounded-lg border border-[#E6E0FF] bg-white px-4 text-[#333333] outline-none transition focus:border-[#8A5CF6] focus:ring-4 focus:ring-[#B094FF]/25"
+                >
+                  {sourceTools.map((tool) => (
+                    <option key={tool} value={tool}>
+                      {tool}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <label className="block space-y-2">
+              <span className="text-sm font-semibold text-[#3b168c]">
+                Raw context
+              </span>
+              <textarea
+                value={rawContext}
+                onChange={(event) => setRawContext(event.target.value)}
+                rows={10}
+                className="min-h-56 w-full rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] px-4 py-3 text-sm leading-6 text-[#333333] outline-none transition placeholder:text-[#9ca3af] focus:border-[#8A5CF6] focus:bg-white focus:ring-4 focus:ring-[#B094FF]/25"
+                placeholder="여기에 ChatGPT, Claude, Codex, Gemini의 작업 맥락을 붙여넣으세요."
+              />
             </label>
 
-            <div className="flex items-end gap-2">
+            {characterCount > 12000 ? (
+              <p className="rounded-lg border border-[#ffb0c6] bg-[#fff1f5] p-3 text-sm text-[#9f1239]">
+                맥락이 꽤 깁니다. MVP mock 압축은 앞부분과 규칙 기반
+                라인을 중심으로 정리합니다.
+              </p>
+            ) : null}
+
+            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
               <button
                 type="button"
-                onClick={handleMergeContext}
-                disabled={contextPieces.length === 0}
-                className="h-11 rounded-lg bg-[#6A46E2] px-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#5A32C8] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/40"
+                onClick={handleAddContextPiece}
+                disabled={characterCount === 0}
+                className="h-11 rounded-lg bg-[#6A46E2] px-4 text-sm font-bold text-white shadow-[0_12px_26px_rgba(106,70,226,0.22)] transition hover:bg-[#5A32C8] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/40"
               >
-                공통맥락 병합
+                공통맥락에 추가
+              </button>
+              <button
+                type="submit"
+                className="h-11 rounded-lg bg-[#2D185D] px-4 text-sm font-bold text-white transition hover:bg-[#201044] focus:outline-none focus:ring-4 focus:ring-[#B094FF]/40"
+              >
+                미리보기 압축
               </button>
               <button
                 type="button"
-                onClick={handleClearContextPieces}
-                disabled={contextPieces.length === 0}
+                onClick={() => setRawContext(sampleContext)}
+                className="h-11 rounded-lg border border-[#E6E0FF] bg-white px-4 text-sm font-bold text-[#3b168c] transition hover:bg-[#F5F1FF] focus:outline-none focus:ring-4 focus:ring-[#B094FF]/25"
+              >
+                샘플 불러오기
+              </button>
+              <button
+                type="button"
+                onClick={handleClearContext}
+                disabled={characterCount === 0 && result === null}
                 className="h-11 rounded-lg border border-[#E6E0FF] bg-white px-4 text-sm font-bold text-[#6B6B7B] transition hover:bg-[#F5F1FF] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/25"
               >
-                비우기
+                입력 비우기
               </button>
             </div>
-          </div>
-        </div>
+          </form>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-semibold text-[#3b168c]">
-            {contextPieces.length.toLocaleString("ko-KR")}개 맥락 조각 수집됨
-          </p>
-          <button
-            type="button"
-            onClick={handleLoadParallelSamples}
-            className="h-10 rounded-lg border border-[#8DE5B4] bg-[#ECFFF5] px-4 text-sm font-bold text-[#126B42] transition hover:bg-[#D9FFEA] focus:outline-none focus:ring-4 focus:ring-[#8DE5B4]/30"
-          >
-            병렬 샘플 3개 추가
-          </button>
-        </div>
-
-        {contextPieces.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-[#B094FF] bg-[#FCFAFF] p-5 text-sm leading-6 text-[#6B6B7B]">
-            첫 번째 raw context를 붙여넣고 공통맥락에 추가를 누르면 여기에서
-            도구별 맥락 조각을 관리할 수 있어요.
-          </div>
-        ) : (
-          <ul className="grid gap-3">
-            {contextPieces.map((piece) => (
-              <li
-                key={piece.id}
-                className="rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] p-4"
-              >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-full bg-[#E6E0FF] px-3 py-1 text-xs font-bold text-[#3b168c]">
-                        {piece.sourceTool}
-                      </span>
-                      <span className="text-xs font-semibold text-[#6B6B7B]">
-                        {piece.characterCount.toLocaleString("ko-KR")} chars ·{" "}
-                        {formatCreatedAt(piece.createdAt)}
-                      </span>
-                    </div>
-                    <h3 className="mt-2 text-base font-bold text-[#2D185D]">
-                      {piece.title}
-                    </h3>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveContextPiece(piece.id)}
-                    className="h-9 rounded-lg border border-[#FFB0C6] bg-white px-3 text-sm font-bold text-[#9F1239] transition hover:bg-[#FFF1F5] focus:outline-none focus:ring-4 focus:ring-[#FFB0C6]/25"
-                  >
-                    삭제
-                  </button>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-[#56536B]">
-                  {previewSummary(piece.result)}
+          <section className="space-y-4 rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8A5CF6]">
+                  Common tray
                 </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+                <h3 className="mt-1 text-lg font-bold text-[#2D185D]">
+                  공통맥락 수집함
+                </h3>
+              </div>
+              <span
+                className="rounded-lg bg-white px-3 py-2 text-sm font-bold text-[#3b168c]"
+                aria-live="polite"
+              >
+                {contextPieces.length.toLocaleString("ko-KR")}개
+              </span>
+            </div>
 
-      {mergedResult ? (
-        <div className="mt-6">
+            <div className="grid gap-3">
+              <label className="space-y-2">
+                <span className="text-sm font-semibold text-[#3b168c]">
+                  넘겨줄 대상 AI 도구
+                </span>
+                <select
+                  value={targetTool}
+                  onChange={(event) =>
+                    setTargetTool(event.target.value as SourceTool)
+                  }
+                  className="h-11 w-full rounded-lg border border-[#E6E0FF] bg-white px-3 text-[#333333] outline-none transition focus:border-[#8A5CF6] focus:ring-4 focus:ring-[#B094FF]/25"
+                >
+                  {sourceTools.map((tool) => (
+                    <option key={tool} value={tool}>
+                      {tool}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={handleMergeContext}
+                  disabled={contextPieces.length === 0}
+                  className="h-11 rounded-lg bg-[#6A46E2] px-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#5A32C8] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/40"
+                >
+                  공통맥락 병합
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLoadParallelSamples}
+                  className="h-11 rounded-lg border border-[#8DE5B4] bg-[#ECFFF5] px-4 text-sm font-bold text-[#126B42] transition hover:bg-[#D9FFEA] focus:outline-none focus:ring-4 focus:ring-[#8DE5B4]/30"
+                >
+                  병렬 샘플 추가
+                </button>
+              </div>
+            </div>
+
+            {contextPieces.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-[#B094FF] bg-white p-5 text-sm leading-6 text-[#6B6B7B]">
+                아직 수집된 맥락이 없습니다. 샘플을 추가하거나 왼쪽 입력을
+                공통맥락에 추가해보세요.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <ul className="max-h-[31rem] space-y-3 overflow-auto pr-1">
+                  {contextPieces.map((piece) => (
+                    <li
+                      key={piece.id}
+                      className="rounded-lg border border-[#E6E0FF] bg-white p-3"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-lg bg-[#F5F1FF] px-2 py-1 text-xs font-bold text-[#3b168c]">
+                              {piece.sourceTool}
+                            </span>
+                            <span className="text-xs font-semibold text-[#6B6B7B]">
+                              {piece.characterCount.toLocaleString("ko-KR")}{" "}
+                              chars · {formatCreatedAt(piece.createdAt)}
+                            </span>
+                          </div>
+                          <h4 className="mt-2 truncate text-sm font-bold text-[#2D185D]">
+                            {piece.title}
+                          </h4>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveContextPiece(piece.id)}
+                          className="h-8 shrink-0 rounded-lg border border-[#FFB0C6] bg-white px-3 text-xs font-bold text-[#9F1239] transition hover:bg-[#FFF1F5] focus:outline-none focus:ring-4 focus:ring-[#FFB0C6]/25"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                      <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#56536B]">
+                        {previewSummary(piece.result)}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  onClick={handleClearContextPieces}
+                  className="h-10 w-full rounded-lg border border-[#E6E0FF] bg-white px-4 text-sm font-bold text-[#6B6B7B] transition hover:bg-[#F5F1FF] focus:outline-none focus:ring-4 focus:ring-[#B094FF]/25"
+                >
+                  수집함 비우기
+                </button>
+              </div>
+            )}
+          </section>
+        </div>
+
+        {mergedResult ? (
           <ResultPanel
             result={mergedResult}
             title="공통맥락 병합 결과"
@@ -502,19 +575,19 @@ export function ContextForm() {
               "ko-KR",
             )}개 맥락 조각을 ${targetTool}에 넘기기 위한 mock handoff입니다.`}
             downloads={mergedDownloads}
+            initialSection="handoffMarkdown"
           />
-        </div>
-      ) : null}
+        ) : null}
 
-      {result ? (
-        <div className="mt-6">
+        {result ? (
           <ResultPanel
             result={result}
             title="현재 조각 압축 결과"
             description="현재 입력 또는 최근 추가된 맥락 조각의 mock 정리본입니다."
+            initialSection="sessionSummary"
           />
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </div>
   );
 }

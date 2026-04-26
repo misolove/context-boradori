@@ -27,24 +27,25 @@ export default function Home() {
                 맥락 보라돌이
               </h1>
               <p className="text-xl font-semibold text-[#8A5CF6] sm:text-2xl">
-                흩어진 AI 맥락을 모으고, 이해하고, 연결하는 친구
+                여러 AI 맥락을 하나로 모아 넘기는 친구
               </p>
               <p className="max-w-2xl text-base leading-7 text-[#56536B] sm:text-lg">
-                ChatGPT, Claude, Codex, Gemini의 작업 맥락을 붙여넣으면
-                다음 AI가 바로 이어받을 수 있도록 정리해드려요.
+                ChatGPT, Claude, Codex, Gemini에서 진행한 내용을
+                공통맥락으로 병합하고, 다음 AI가 바로 이어받을 handoff로
+                정리해드려요.
               </p>
               <p className="inline-flex rounded-full border border-[#E6E0FF] bg-white/70 px-4 py-2 text-sm font-semibold text-[#3b168c] shadow-sm">
-                지금 MVP는 브라우저 안에서만 mock 압축을 실행해요.
+                로컬 mock 병합 · 외부 API 호출 없음
               </p>
             </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-4">
             {[
-              ["모으다", "context capture"],
-              ["이해하다", "key structure"],
-              ["압축하다", "local mock"],
-              ["연결하다", "handoff files"],
+              ["붙여넣기", "source capture"],
+              ["수집함", "common tray"],
+              ["병합하기", "shared context"],
+              ["내보내기", "handoff files"],
             ].map(([label, value], index) => (
               <div
                 key={label}

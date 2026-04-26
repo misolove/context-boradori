@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { CopyButton } from "@/components/CopyButton";
 import type { CompressionResult } from "@/lib/compression";
 import { downloadMarkdownFile } from "@/lib/markdown";
@@ -9,6 +10,7 @@ type ResultPanelProps = {
   title?: string;
   description?: string;
   downloads?: ResultDownload[];
+  initialSection?: keyof CompressionResult;
 };
 
 const resultSections: Array<{
@@ -43,16 +45,22 @@ export function ResultPanel({
   title = "압축 결과",
   description = "모든 결과는 브라우저에서 만든 mock 정리본입니다.",
   downloads = defaultDownloads,
+  initialSection = "sessionSummary",
 }: ResultPanelProps) {
+  const [activeKey, setActiveKey] =
+    useState<keyof CompressionResult>(initialSection);
+  const activeSection =
+    resultSections.find((section) => section.key === activeKey) ??
+    resultSections[0];
+  const activeContent = result[activeSection.key];
+
   return (
     <section className="space-y-4" aria-label="압축 결과">
       <div className="rounded-lg border border-[#E6E0FF] bg-[#F7F4FF] p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-lg font-bold text-[#2D185D]">{title}</h2>
-            <p className="text-sm text-[#6B6B7B]">
-              {description}
-            </p>
+            <p className="text-sm text-[#6B6B7B]">{description}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:flex">
             {downloads.map((download) => (
@@ -71,27 +79,39 @@ export function ResultPanel({
         </div>
       </div>
 
-      <div className="grid gap-4">
-        {resultSections.map((section) => {
-          const content = result[section.key];
+      <div className="rounded-lg border border-white/80 bg-white/90 p-3 shadow-sm">
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {resultSections.map((section) => {
+            const isActive = section.key === activeSection.key;
 
-          return (
-            <article
-              key={section.key}
-              className="rounded-lg border border-white/80 bg-white/90 p-4 shadow-sm"
-            >
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <h3 className="text-base font-bold text-[#2D185D]">
-                  {section.title}
-                </h3>
-                <CopyButton text={content} />
-              </div>
-              <pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] p-4 font-mono text-xs leading-6 text-[#333333]">
-                {content}
-              </pre>
-            </article>
-          );
-        })}
+            return (
+              <button
+                key={section.key}
+                type="button"
+                onClick={() => setActiveKey(section.key)}
+                className={`min-h-10 rounded-lg px-3 py-2 text-left text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-[#B094FF] ${
+                  isActive
+                    ? "bg-[#6A46E2] text-white shadow-sm"
+                    : "border border-[#E6E0FF] bg-[#FCFAFF] text-[#3b168c] hover:bg-[#F5F1FF]"
+                }`}
+              >
+                {section.title}
+              </button>
+            );
+          })}
+        </div>
+
+        <article className="mt-3 rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h3 className="text-base font-bold text-[#2D185D]">
+              {activeSection.title}
+            </h3>
+            <CopyButton text={activeContent} />
+          </div>
+          <pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-[#E6E0FF] bg-white p-4 font-mono text-xs leading-6 text-[#333333]">
+            {activeContent}
+          </pre>
+        </article>
       </div>
     </section>
   );
