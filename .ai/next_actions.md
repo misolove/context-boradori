@@ -12,6 +12,7 @@
 - [x] Add markdown download buttons
 - [x] Deploy first Vercel demo
 - [x] Connect GitHub repo to Vercel project
+- [x] Add brand identity assets to app and README
 
 ## P1
 
@@ -19,7 +20,7 @@
 - [ ] Add local IndexedDB storage
 - [ ] Add stronger secret redaction before any future LLM call
 - [ ] Add sample demo context variants
-- [ ] Add screenshots to README
+- [ ] Add product-flow screenshots to README
 
 ## P2
 

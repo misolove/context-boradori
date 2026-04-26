@@ -31,9 +31,17 @@ Live demo:
 
 [https://context-boradori.vercel.app](https://context-boradori.vercel.app)
 
+## Brand Identity
+
+맥락 보라돌이는 귀엽지만 똑똑한 AI context librarian입니다. 브랜드 키워드는 **모은다, 이해한다, 압축한다, 연결한다**입니다.
+
+![맥락 보라돌이 brand identity](./public/brand/boradori-brand-identity.png)
+
+![맥락 보라돌이 concept board](./public/brand/boradori-concept-board.png)
+
 ## Screenshots
 
-Screenshots will be added after the hackathon demo flow is finalized.
+Product flow screenshots will be added after the browser QA pass.
 
 ## Local Development
 
@@ -72,6 +80,7 @@ The shared project memory lives in `.ai/`:
 
 ## Roadmap
 
+- Browser click-through QA for sample context, copy, and downloads
 - Local browser persistence with IndexedDB
 - Stronger secret redaction
 - Real LLM compression route using Vercel AI SDK

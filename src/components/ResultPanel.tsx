@@ -36,11 +36,11 @@ const downloads: Array<{
 export function ResultPanel({ result }: ResultPanelProps) {
   return (
     <section className="space-y-4" aria-label="압축 결과">
-      <div className="rounded-lg border border-[#d7ccff] bg-[#f8f5ff] p-4">
+      <div className="rounded-lg border border-[#E6E0FF] bg-[#F7F4FF] p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-bold text-[#2a145f]">압축 결과</h2>
-            <p className="text-sm text-[#6b7280]">
+            <h2 className="text-lg font-bold text-[#2D185D]">압축 결과</h2>
+            <p className="text-sm text-[#6B6B7B]">
               모든 결과는 브라우저에서 만든 mock 정리본입니다.
             </p>
           </div>
@@ -52,7 +52,7 @@ export function ResultPanel({ result }: ResultPanelProps) {
                 onClick={() =>
                   downloadMarkdownFile(download.filename, result[download.key])
                 }
-                className="h-9 rounded-lg bg-[#3b168c] px-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#2a145f] focus:outline-none focus:ring-2 focus:ring-[#a78bfa]"
+                className="h-9 rounded-lg bg-[#6A46E2] px-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#5A32C8] focus:outline-none focus:ring-2 focus:ring-[#B094FF]"
               >
                 {download.filename}
               </button>
@@ -71,12 +71,12 @@ export function ResultPanel({ result }: ResultPanelProps) {
               className="rounded-lg border border-white/80 bg-white/90 p-4 shadow-sm"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <h3 className="text-base font-bold text-[#2a145f]">
+                <h3 className="text-base font-bold text-[#2D185D]">
                   {section.title}
                 </h3>
                 <CopyButton text={content} />
               </div>
-              <pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-[#eee9ff] bg-[#fbfaff] p-4 font-mono text-xs leading-6 text-[#374151]">
+              <pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] p-4 font-mono text-xs leading-6 text-[#333333]">
                 {content}
               </pre>
             </article>

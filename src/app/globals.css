@@ -22,9 +22,10 @@
 body {
   min-width: 320px;
   background:
-    radial-gradient(circle at top left, rgba(255, 215, 102, 0.3), transparent 32rem),
-    radial-gradient(circle at top right, rgba(109, 183, 255, 0.22), transparent 30rem),
-    linear-gradient(180deg, #f3edff 0%, #fff8fb 48%, #f8fbff 100%);
+    radial-gradient(circle at top left, rgba(255, 200, 87, 0.32), transparent 32rem),
+    radial-gradient(circle at top right, rgba(110, 187, 255, 0.24), transparent 30rem),
+    radial-gradient(circle at 20% 55%, rgba(116, 227, 193, 0.16), transparent 24rem),
+    linear-gradient(180deg, #f7f4ff 0%, #fff9fc 48%, #f8fbff 100%);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }

@@ -41,7 +41,7 @@ export function CopyButton({ text, label = "복사" }: CopyButtonProps) {
     <button
       type="button"
       onClick={handleCopy}
-      className="inline-flex h-9 items-center justify-center rounded-lg border border-[#ded4ff] bg-white px-3 text-sm font-semibold text-[#3b168c] shadow-sm transition hover:border-[#a78bfa] hover:bg-[#f3edff] focus:outline-none focus:ring-2 focus:ring-[#a78bfa]"
+      className="inline-flex h-9 items-center justify-center rounded-lg border border-[#E6E0FF] bg-white px-3 text-sm font-semibold text-[#3b168c] shadow-sm transition hover:border-[#B094FF] hover:bg-[#F5F1FF] focus:outline-none focus:ring-2 focus:ring-[#B094FF]"
     >
       {copied ? "복사됨" : label}
     </button>

@@ -5,7 +5,7 @@ Updated by: Codex
 
 ## Status
 
-Initial screen-first MVP is implemented and deployed.
+Initial screen-first MVP is implemented, deployed, and updated with the generated brand identity assets.
 
 ## Confirmed decisions
 
@@ -16,6 +16,7 @@ Initial screen-first MVP is implemented and deployed.
 - Official project memory should live in `.ai/`
 - MVP should avoid paid database and external AI dependency
 - First deployed demo URL: https://context-boradori.vercel.app
+- Brand direction: cute but smart AI context librarian using the "모으다 / 이해하다 / 압축하다 / 연결하다" motif
 
 ## Current implementation
 
@@ -27,6 +28,8 @@ Initial screen-first MVP is implemented and deployed.
 - Copy buttons and markdown download buttons
 - Basic sensitive text redaction for common API key/token/database URL patterns
 - Vercel project connected to `misolove/context-boradori`
+- Brand images added under `public/brand/`
+- UI palette and copy aligned with the generated brand boards
 
 ## Not started / future
 
@@ -36,3 +39,4 @@ Initial screen-first MVP is implemented and deployed.
 - GitHub PR export
 - MCP integration
 - Browser QA for clipboard/download behavior across browsers
+- Product-flow screenshots for README

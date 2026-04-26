@@ -30,25 +30,58 @@ export function BrandMark({ size = "lg" }: BrandMarkProps) {
           fill={`url(#${gradientId})`}
         />
         <path
-          d="M44 25C44 15 51 9 60 9H68C77 9 84 15 84 25"
-          stroke="#3B168C"
-          strokeWidth="7"
+          d="M49 24C43 12 51 5 62 18C73 5 84 12 78 25"
+          fill="#8A5CF6"
+          stroke="#5A32C8"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <path
+          d="M24 67C15 57 13 45 20 36M104 68C115 57 117 45 108 36"
+          stroke="#B094FF"
+          strokeWidth="5"
           strokeLinecap="round"
         />
         <circle cx="47" cy="62" r="13" fill="#F8F5FF" />
         <circle cx="81" cy="62" r="13" fill="#F8F5FF" />
+        <circle
+          cx="47"
+          cy="62"
+          r="17"
+          stroke="#FFC857"
+          strokeWidth="5"
+        />
+        <circle
+          cx="81"
+          cy="62"
+          r="17"
+          stroke="#FFC857"
+          strokeWidth="5"
+        />
         <circle cx="47" cy="62" r="5" fill="#3B168C" />
         <circle cx="81" cy="62" r="5" fill="#3B168C" />
         <path
           d="M60 62H68"
-          stroke="#3B168C"
-          strokeWidth="5"
+          stroke="#FFC857"
+          strokeWidth="4"
           strokeLinecap="round"
         />
         <path
           d="M47 86C55 93 73 93 81 86"
-          stroke="#FFD766"
+          stroke="#FF8FA3"
           strokeWidth="6"
+          strokeLinecap="round"
+        />
+        <path
+          d="M30 95C47 104 82 104 99 95"
+          stroke="#2D185D"
+          strokeWidth="10"
+          strokeLinecap="round"
+        />
+        <path
+          d="M56 99C59 104 69 104 72 99"
+          stroke="#FFC857"
+          strokeWidth="5"
           strokeLinecap="round"
         />
         <circle cx="25" cy="35" r="6" fill="#8DE5B4" />
@@ -69,9 +102,9 @@ export function BrandMark({ size = "lg" }: BrandMarkProps) {
             y2="106"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#A78BFA" />
-            <stop offset="0.55" stopColor="#6E45E2" />
-            <stop offset="1" stopColor="#3B168C" />
+            <stop stopColor="#B094FF" />
+            <stop offset="0.55" stopColor="#8A5CF6" />
+            <stop offset="1" stopColor="#6A46E2" />
           </linearGradient>
         </defs>
       </svg>
