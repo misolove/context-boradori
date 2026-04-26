@@ -5,7 +5,7 @@ Updated by: Codex
 
 ## Status
 
-Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, enhanced with a visual north-star context map, tightened so the north-star map is visible in the first viewport, supports Korean/English UI switching, and has a Korean-first bilingual README for GitHub.
+Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, enhanced with a visual north-star context map, tightened so the north-star map is visible in the first viewport, supports Korean/English UI switching, and has GitHub-style README language links with Korean as the default.
 
 ## Confirmed decisions
 
@@ -43,7 +43,7 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Users can edit the project north star, and the same sentence is used in the map plus handoff/agent exports.
 - Users can toggle the main demo UI between Korean and English; `?lang=en` opens directly in English for judges.
 - English mode includes translated hero/workspace/map/result UI, English sample contexts, English mock fallback text, and English handoff section headings.
-- GitHub README is Korean-first and includes a complete English section for international judges/users.
+- GitHub README is Korean-first by default, with `README.en.md` available through a top language link for international judges/users.
 
 ## Not started / future
 
