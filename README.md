@@ -81,4 +81,4 @@ The shared project memory lives in `.ai/`:
 
 ## License
 
-License is currently inherited from the repository `LICENSE` file.
+MIT License. See [`LICENSE`](./LICENSE).
