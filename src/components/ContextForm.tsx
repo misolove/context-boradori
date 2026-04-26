@@ -53,7 +53,8 @@ export function ContextForm() {
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-lg border border-[#f0d98c] bg-[#fff8de] p-3 text-sm leading-6 text-[#624600]">
           API 키, 비밀번호, 토큰, 개인 금융정보는 붙여넣지 마세요. 공개
-          repo에는 raw context를 저장하지 않는 것을 권장합니다.
+          repo에는 raw context를 저장하지 않는 것을 권장합니다. 현재 데모는
+          외부 AI API를 호출하지 않습니다.
         </div>
 
         <div className="grid gap-4 sm:grid-cols-[1.2fr_0.8fr]">
