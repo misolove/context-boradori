@@ -30,6 +30,7 @@ Initial screen-first MVP is implemented, deployed, and updated with the generate
 - Vercel project connected to `misolove/context-boradori`
 - Brand images added under `public/brand/`
 - UI palette and copy aligned with the generated brand boards
+- Changing the source AI tool clears stale compression results but preserves raw context; users can explicitly clear input with `입력 비우기`.
 
 ## Not started / future
 

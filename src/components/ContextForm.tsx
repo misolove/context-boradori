@@ -49,6 +49,16 @@ export function ContextForm() {
     );
   }
 
+  function handleSourceToolChange(nextSourceTool: SourceTool) {
+    setSourceTool(nextSourceTool);
+    setResult(null);
+  }
+
+  function handleClearContext() {
+    setRawContext("");
+    setResult(null);
+  }
+
   return (
     <div className="rounded-lg border border-white/80 bg-white/85 p-4 shadow-[0_24px_70px_rgba(106,70,226,0.18)] backdrop-blur sm:p-5 lg:p-6">
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -77,7 +87,9 @@ export function ContextForm() {
             </span>
             <select
               value={sourceTool}
-              onChange={(event) => setSourceTool(event.target.value as SourceTool)}
+              onChange={(event) =>
+                handleSourceToolChange(event.target.value as SourceTool)
+              }
               className="h-12 w-full rounded-lg border border-[#E6E0FF] bg-white px-4 text-[#333333] outline-none transition focus:border-[#8A5CF6] focus:ring-4 focus:ring-[#B094FF]/25"
             >
               {sourceTools.map((tool) => (
@@ -127,6 +139,14 @@ export function ContextForm() {
             className="h-12 rounded-lg border border-[#E6E0FF] bg-white px-5 text-base font-bold text-[#3b168c] transition hover:bg-[#F5F1FF] focus:outline-none focus:ring-4 focus:ring-[#B094FF]/25"
           >
             샘플 맥락 불러오기
+          </button>
+          <button
+            type="button"
+            onClick={handleClearContext}
+            disabled={characterCount === 0 && result === null}
+            className="h-12 rounded-lg border border-[#E6E0FF] bg-white px-5 text-base font-bold text-[#6B6B7B] transition hover:bg-[#F5F1FF] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/25"
+          >
+            입력 비우기
           </button>
         </div>
       </form>
