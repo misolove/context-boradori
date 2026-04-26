@@ -5,7 +5,7 @@ Updated by: Codex
 
 ## Status
 
-Initial screen-first MVP is implemented, deployed, and updated with the generated brand identity assets.
+Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, and extended with a multi-source common context flow.
 
 ## Confirmed decisions
 
@@ -17,6 +17,7 @@ Initial screen-first MVP is implemented, deployed, and updated with the generate
 - MVP should avoid paid database and external AI dependency
 - First deployed demo URL: https://context-boradori.vercel.app
 - Brand direction: cute but smart AI context librarian using the "모으다 / 이해하다 / 압축하다 / 연결하다" motif
+- Product direction: multiple AI tool sessions should be collected into a shared common context, then exported for the next target AI tool.
 
 ## Current implementation
 
@@ -31,12 +32,17 @@ Initial screen-first MVP is implemented, deployed, and updated with the generate
 - Brand images added under `public/brand/`
 - UI palette and copy aligned with the generated brand boards
 - Changing the source AI tool clears stale compression results but preserves raw context; users can explicitly clear input with `입력 비우기`.
+- Users can add compressed context pieces from multiple source tools into a common context tray.
+- The tray can be merged into a common handoff for a selected target AI tool.
+- Demo sample button can add three parallel context pieces from ChatGPT, Codex, and Claude.
+- Context pieces are stored in browser `localStorage` for demo continuity; no server or GitHub DB is used.
 
 ## Not started / future
 
 - Real LLM compression API
 - Vercel AI SDK streaming
 - IndexedDB persistence
+- Stronger conflict detection between parallel AI tool sessions
 - GitHub PR export
 - MCP integration
 - Browser QA for clipboard/download behavior across browsers

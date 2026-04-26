@@ -16,10 +16,10 @@
 
 ## P1
 
-- [ ] Run browser click-through QA for sample context, copy, and downloads
+- [ ] Run browser click-through QA for sample context, multi-source merge, copy, and downloads
 - [ ] Add local IndexedDB storage
 - [ ] Add stronger secret redaction before any future LLM call
-- [ ] Add sample demo context variants
+- [x] Add sample demo context variants
 - [ ] Add product-flow screenshots to README
 
 ## P2
@@ -28,3 +28,4 @@
 - [ ] Add streaming result UI
 - [ ] Add GitHub PR export later
 - [ ] Add MCP/CLI handoff integration
+- [ ] Add conflict detection and resolution UI for competing AI tool suggestions

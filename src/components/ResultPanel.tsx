@@ -6,6 +6,9 @@ import { downloadMarkdownFile } from "@/lib/markdown";
 
 type ResultPanelProps = {
   result: CompressionResult;
+  title?: string;
+  description?: string;
+  downloads?: ResultDownload[];
 };
 
 const resultSections: Array<{
@@ -23,25 +26,32 @@ const resultSections: Array<{
   { key: "geminiMd", title: "GEMINI.md export" },
 ];
 
-const downloads: Array<{
+type ResultDownload = {
   key: keyof CompressionResult;
   filename: string;
-}> = [
+};
+
+const defaultDownloads: ResultDownload[] = [
   { key: "handoffMarkdown", filename: "handoff.md" },
   { key: "agentsMd", filename: "AGENTS.md" },
   { key: "claudeMd", filename: "CLAUDE.md" },
   { key: "geminiMd", filename: "GEMINI.md" },
 ];
 
-export function ResultPanel({ result }: ResultPanelProps) {
+export function ResultPanel({
+  result,
+  title = "압축 결과",
+  description = "모든 결과는 브라우저에서 만든 mock 정리본입니다.",
+  downloads = defaultDownloads,
+}: ResultPanelProps) {
   return (
     <section className="space-y-4" aria-label="압축 결과">
       <div className="rounded-lg border border-[#E6E0FF] bg-[#F7F4FF] p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-bold text-[#2D185D]">압축 결과</h2>
+            <h2 className="text-lg font-bold text-[#2D185D]">{title}</h2>
             <p className="text-sm text-[#6B6B7B]">
-              모든 결과는 브라우저에서 만든 mock 정리본입니다.
+              {description}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:flex">

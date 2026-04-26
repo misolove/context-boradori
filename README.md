@@ -12,12 +12,18 @@
 
 맥락 보라돌이는 사용자가 붙여넣은 raw context를 브라우저 안에서 구조화합니다. MVP에서는 외부 AI API를 호출하지 않고, 규칙 기반 mock compression으로 데모 가능한 흐름을 먼저 완성했습니다.
 
+핵심 흐름은 여러 도구의 맥락 조각을 모아 하나의 공통 프로젝트 기억으로 병합한 뒤, 다음에 사용할 AI 도구용 handoff로 다시 내보내는 것입니다.
+
 ## MVP Features
 
 - Project name input
 - Source AI tool selector
+- Target AI tool selector for common handoff
 - Raw context paste area
 - Local mock compression
+- Multi-source context tray
+- Common context merge from multiple AI tool sessions
+- Browser-only saved context pieces for demo continuity
 - Session summary, decisions, proposed ideas, open questions, next actions
 - Handoff markdown export
 - `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` export previews
@@ -66,7 +72,7 @@ npm audit --omit=dev
 
 Do not paste API keys, passwords, tokens, private URLs, or private financial information into this app.
 
-The current MVP does not call external AI APIs and does not intentionally persist raw context. Future AI/API features should add stronger redaction and explicit user consent before sending any content outside the browser.
+The current MVP does not call external AI APIs and does not send raw context to a server. The multi-source tray stores generated context pieces in this browser only for demo continuity. Future AI/API features should add stronger redaction and explicit user consent before sending any content outside the browser.
 
 ## Project Memory
 
@@ -80,7 +86,8 @@ The shared project memory lives in `.ai/`:
 
 ## Roadmap
 
-- Browser click-through QA for sample context, copy, and downloads
+- Browser click-through QA for multi-source sample context, merge, copy, and downloads
+- Conflict detection between AI tool sessions
 - Local browser persistence with IndexedDB
 - Stronger secret redaction
 - Real LLM compression route using Vercel AI SDK
