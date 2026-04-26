@@ -99,7 +99,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-4 grid gap-2 sm:grid-cols-4 lg:grid-cols-2">
+            <div className="mt-4 hidden gap-2 sm:grid sm:grid-cols-4 lg:grid-cols-2">
               {text.hero.steps.map(([label, value], index) => (
                 <div
                   key={label}

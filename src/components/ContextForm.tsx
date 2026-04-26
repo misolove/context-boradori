@@ -451,7 +451,7 @@ export function ContextForm({ locale }: ContextFormProps) {
           </dl>
         </div>
 
-        <ol className="mt-4 grid gap-2 sm:grid-cols-3">
+        <ol className="mt-4 hidden gap-2 sm:grid sm:grid-cols-3">
           {[
             ["01", text.steps[0], characterCount > 0],
             ["02", text.steps[1], contextPieces.length > 0],
@@ -474,7 +474,7 @@ export function ContextForm({ locale }: ContextFormProps) {
 
       <div className="space-y-5 p-4 sm:p-5">
         <div className="grid gap-3 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-start">
-          <label className="space-y-2 rounded-lg border border-[#E6E0FF] bg-white p-3">
+          <label className="order-2 space-y-2 rounded-lg border border-[#E6E0FF] bg-white p-3 lg:order-1">
             <span className="text-sm font-bold text-[#3b168c]">
               {text.northStarLabel}
             </span>
@@ -495,14 +495,16 @@ export function ContextForm({ locale }: ContextFormProps) {
             </p>
           </label>
 
-          <ContextMap
-            pieces={contextPieces}
-            projectName={projectName}
-            targetTool={targetTool}
-            result={mergedResult}
-            northStar={effectiveNorthStar}
-            locale={locale}
-          />
+          <div className="order-1 lg:order-2">
+            <ContextMap
+              pieces={contextPieces}
+              projectName={projectName}
+              targetTool={targetTool}
+              result={mergedResult}
+              northStar={effectiveNorthStar}
+              locale={locale}
+            />
+          </div>
         </div>
 
         <div className="rounded-lg border border-[#FFC857] bg-[#FFF8DE] p-3 text-sm leading-6 text-[#624600]">

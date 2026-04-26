@@ -58,11 +58,13 @@ export type MergeInput = {
 };
 
 const decisionPattern = /(결정|확정|confirmed|decided|decision)/i;
-const nextActionPattern = /(todo|해야|할 일|next|다음|액션|action)/i;
+const nextActionPattern = /(todo|해야|할 일|\bnext\b(?!\.js)|다음|액션|action)/i;
 const questionPattern = /(\?|질문|궁금|확인 필요|open question)/i;
 const proposedPattern = /(제안|아이디어|idea|proposal|proposed|maybe|고려|나중에|옵션)/i;
+const proposedPrefixPattern =
+  /^(제안|아이디어|idea|proposal|proposed|maybe|고려|나중에|옵션)\s*[:：]/i;
 const fallbackPattern =
-  /(찾지 못했습니다|아직 입력되지 않았습니다|빈 handoff 초안)/;
+  /(찾지 못했습니다|아직 입력되지 않았습니다|빈 handoff 초안|No clearly confirmed decisions were found|No proposed ideas were found|No open questions were found|No next actions were found|does not have raw context yet|empty handoff draft)/i;
 
 function normalizeLines(text: string) {
   return text
@@ -81,6 +83,14 @@ function uniqueMergedLines(lines: string[]) {
 
 function extractLines(lines: string[], pattern: RegExp) {
   return uniqueLines(lines.filter((line) => pattern.test(line)));
+}
+
+function extractDecisionLines(lines: string[]) {
+  return uniqueLines(
+    lines.filter(
+      (line) => decisionPattern.test(line) && !proposedPrefixPattern.test(line),
+    ),
+  );
 }
 
 function toBulletList(lines: string[], fallback: string) {
@@ -190,7 +200,7 @@ export function generateMockCompression(
     ),
     sessionSummary: buildSummary(input, redactedContext),
     confirmedDecisions: toBulletList(
-      extractLines(lines, decisionPattern),
+      extractDecisionLines(lines),
       locale === "en"
         ? "No clearly confirmed decisions were found."
         : "명확히 확정된 결정사항을 찾지 못했습니다.",

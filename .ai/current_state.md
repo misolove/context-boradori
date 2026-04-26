@@ -45,6 +45,9 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - English mode includes translated hero/workspace/map/result UI, English sample contexts, English mock fallback text, and English handoff section headings.
 - GitHub README is Korean-first by default, with `README.en.md` available through a top language link for international judges/users.
 - English brand boards are available in `public/brand/`, and the English app/README views use the English image assets while Korean remains the default.
+- Browser QA covered Korean/English sample loading, multi-source merge, source-tool clearing, copy, markdown downloads, localStorage persistence, and desktop/mobile first-viewport positioning.
+- Mock compression heuristics now avoid treating `Next.js` as a next action, avoid classifying proposal-prefixed lines as confirmed decisions, and remove English fallback text from merged handoffs.
+- Mobile layout is tightened so the common-context map starts inside a 390x844 first viewport and appears before the editable north-star textarea.
 
 ## Not started / future
 
@@ -55,5 +58,4 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Reusable project doctrine built from the editable north star
 - GitHub PR export
 - MCP integration
-- Browser QA for clipboard/download behavior across browsers
 - Product-flow screenshots for README

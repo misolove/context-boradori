@@ -16,13 +16,14 @@
 
 ## P1
 
-- [ ] Run browser click-through QA for sample context, multi-source merge, copy, and downloads
+- [x] Run browser click-through QA for sample context, multi-source merge, copy, and downloads
 - [x] Improve main workspace UX with Pencil MCP design-system references
 - [x] Add visual common-context map with north-star alignment
 - [x] Add editable north-star goal input and include it in exports
 - [x] Add Korean/English language toggle for demo UI
 - [x] Add GitHub-style README language switch with `README.en.md`
 - [x] Add English brand image assets for English app/README views
+- [x] Tighten mobile first viewport so the common-context map appears earlier
 - [ ] Add local IndexedDB storage
 - [ ] Add stronger secret redaction before any future LLM call
 - [x] Add sample demo context variants
