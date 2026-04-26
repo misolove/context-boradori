@@ -5,7 +5,7 @@ Updated by: Codex
 
 ## Status
 
-Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, enhanced with a visual north-star context map, tightened so the north-star map is visible in the first viewport, supports Korean/English UI switching, and has GitHub-style README language links with Korean as the default.
+Initial screen-first MVP is implemented, deployed, updated with generated brand identity assets, extended with a multi-source common context flow, refreshed with a more user-friendly workspace UX, enhanced with a visual north-star context map, tightened so the north-star map is visible in the first viewport, supports Korean/English UI switching, has GitHub-style README language links with Korean as the default, and now includes a Korean-first hackathon presentation deck.
 
 ## Confirmed decisions
 
@@ -48,6 +48,10 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Browser QA covered Korean/English sample loading, multi-source merge, source-tool clearing, copy, markdown downloads, localStorage persistence, and desktop/mobile first-viewport positioning.
 - Mock compression heuristics now avoid treating `Next.js` as a next action, avoid classifying proposal-prefixed lines as confirmed decisions, and remove English fallback text from merged handoffs.
 - Mobile layout is tightened so the common-context map starts inside a 390x844 first viewport and appears before the editable north-star textarea.
+- Hackathon presentation materials are available under `presentation/`.
+- The generated PPTX is `presentation/output/output.pptx`, with 9 slides covering problem, solution, product flow, live demo proof, usefulness, tech/safety, roadmap, and closing.
+- Presentation previews and a contact sheet are available under `presentation/scratch/previews/`.
+- Presentation QA passed with no package failures: 9 slides, 4 embedded PNG media files, no zero-byte media, no invalid PNG media, and no placeholder text detected.
 
 ## Not started / future
 
@@ -59,3 +63,4 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - GitHub PR export
 - MCP integration
 - Product-flow screenshots for README
+- Backup demo video for submission safety

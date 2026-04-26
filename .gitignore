@@ -1,5 +1,6 @@
 # dependencies
 /node_modules
+/presentation/node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -72,6 +73,7 @@ temp/
 
 # local agent/runtime state
 .omx/
+/presentation/.playwright-cli/
 
 # editor
 .vscode/*

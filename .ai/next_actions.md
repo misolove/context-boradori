@@ -24,10 +24,12 @@
 - [x] Add GitHub-style README language switch with `README.en.md`
 - [x] Add English brand image assets for English app/README views
 - [x] Tighten mobile first viewport so the common-context map appears earlier
+- [x] Create Korean-first hackathon presentation deck
 - [ ] Add local IndexedDB storage
 - [ ] Add stronger secret redaction before any future LLM call
 - [x] Add sample demo context variants
 - [ ] Add product-flow screenshots to README
+- [ ] Record backup demo video for submission
 
 ## P2
 
