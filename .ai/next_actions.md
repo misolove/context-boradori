@@ -22,6 +22,7 @@
 - [x] Add editable north-star goal input and include it in exports
 - [x] Add Korean/English language toggle for demo UI
 - [x] Add GitHub-style README language switch with `README.en.md`
+- [x] Add English brand image assets for English app/README views
 - [ ] Add local IndexedDB storage
 - [ ] Add stronger secret redaction before any future LLM call
 - [x] Add sample demo context variants

@@ -50,7 +50,9 @@ export const uiText = {
         ["연결한다", "맥락을 이어 새로운 작업으로 넘겨요."],
       ],
       assets: {
+        identityTitle: "브랜드 아이덴티티",
         identity: "맥락 보라돌이 브랜드 아이덴티티 보드",
+        conceptTitle: "컨셉 보드",
         concept: "맥락 보라돌이 캐릭터 컨셉 보드",
       },
     },
@@ -183,7 +185,9 @@ export const uiText = {
         ["Connect", "Turn context into a useful next handoff."],
       ],
       assets: {
+        identityTitle: "Brand identity",
         identity: "Context Boradori brand identity board",
+        conceptTitle: "Concept board",
         concept: "Context Boradori character concept board",
       },
     },

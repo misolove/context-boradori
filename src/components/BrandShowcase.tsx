@@ -17,23 +17,30 @@ const brandFeatures = [
   },
 ];
 
-const brandAssets = [
-  {
-    title: "Brand identity",
-    src: "/brand/boradori-brand-identity.png",
-  },
-  {
-    title: "Concept board",
-    src: "/brand/boradori-concept-board.png",
-  },
-];
-
 type BrandShowcaseProps = {
   locale: Locale;
 };
 
 export function BrandShowcase({ locale }: BrandShowcaseProps) {
   const text = uiText[locale].brand;
+  const brandAssets = [
+    {
+      title: text.assets.identityTitle,
+      alt: text.assets.identity,
+      src:
+        locale === "en"
+          ? "/brand/boradori-brand-identity-en.png"
+          : "/brand/boradori-brand-identity.png",
+    },
+    {
+      title: text.assets.conceptTitle,
+      alt: text.assets.concept,
+      src:
+        locale === "en"
+          ? "/brand/boradori-concept-board-en.png"
+          : "/brand/boradori-concept-board.png",
+    },
+  ];
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8 lg:pb-14">
@@ -78,11 +85,7 @@ export function BrandShowcase({ locale }: BrandShowcaseProps) {
             >
               <Image
                 src={asset.src}
-                alt={
-                  asset.title === "Brand identity"
-                    ? text.assets.identity
-                    : text.assets.concept
-                }
+                alt={asset.alt}
                 width={1122}
                 height={1402}
                 className="aspect-[1122/1402] rounded-md object-cover"

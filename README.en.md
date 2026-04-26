@@ -56,9 +56,9 @@ The key idea is not just summarization. It is the **north star**: confirmed deci
 
 Context Boradori is a cute but smart AI context librarian. The brand verbs are **collect, understand, compress, connect**.
 
-![Context Boradori brand identity](./public/brand/boradori-brand-identity.png)
+![Context Boradori brand identity](./public/brand/boradori-brand-identity-en.png)
 
-![Context Boradori concept board](./public/brand/boradori-concept-board.png)
+![Context Boradori concept board](./public/brand/boradori-concept-board-en.png)
 
 ## Security Note
 

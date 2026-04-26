@@ -44,6 +44,7 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Users can toggle the main demo UI between Korean and English; `?lang=en` opens directly in English for judges.
 - English mode includes translated hero/workspace/map/result UI, English sample contexts, English mock fallback text, and English handoff section headings.
 - GitHub README is Korean-first by default, with `README.en.md` available through a top language link for international judges/users.
+- English brand boards are available in `public/brand/`, and the English app/README views use the English image assets while Korean remains the default.
 
 ## Not started / future
 
