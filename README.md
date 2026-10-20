@@ -11,6 +11,8 @@
 - Live demo: [https://context-boradori.vercel.app](https://context-boradori.vercel.app)
 - English view: [https://context-boradori.vercel.app/?lang=en](https://context-boradori.vercel.app/?lang=en)
 
+공개 데모는 기능을 둘러보는 용도입니다. 실제 작업 맥락은 [로컬 보안 사용 가이드](#로컬-보안-사용-가이드)대로 내 컴퓨터에서 실행해 쓰세요.
+
 ## 문제
 
 여러 AI 도구를 함께 쓰면 각 도구마다 대화 맥락과 작업 이력이 흩어집니다. 그래서 다음 AI에게 같은 설명을 반복해야 하고, 결정사항과 다음 액션이 쉽게 유실됩니다.
@@ -65,6 +67,55 @@
 API 키, 비밀번호, 토큰, private URL, 개인 금융정보는 붙여넣지 마세요.
 
 현재 MVP는 외부 AI API를 호출하지 않고, raw context를 서버로 보내지 않습니다. 공통맥락 수집함은 데모 연속성을 위해 현재 브라우저에만 저장됩니다. 향후 실제 AI API를 붙일 경우 더 강한 redaction과 명시적 사용자 동의가 필요합니다.
+
+## 로컬 보안 사용 가이드
+
+실제 작업 맥락은 내 컴퓨터에서 실행한 맥락 보라돌이에만 넣으세요. 앱은 원래 맥락을 서버로 보내지 않지만, 로컬에서 쓰면 내가 확인한 코드만 실행되고 다른 기기에서는 접속할 수 없습니다.
+
+### 설치와 실행
+
+```bash
+git clone https://github.com/misolove/context-boradori.git
+cd context-boradori
+npm ci
+npm run local
+```
+
+브라우저에서 [http://127.0.0.1:3107](http://127.0.0.1:3107)을 엽니다.
+
+- `npm run local`은 production 빌드를 만든 뒤 `127.0.0.1:3107`에서만 띄웁니다. 같은 Wi-Fi의 다른 기기에서는 접속할 수 없습니다.
+- `npm ci`는 `package-lock.json`에 고정된 버전 그대로 설치합니다.
+- 검토한 버전에 고정하려면 `git checkout <커밋 또는 태그>` 후 실행합니다.
+- Next.js 익명 텔레메트리를 끄려면 `npx next telemetry disable`을 한 번 실행합니다(선택).
+
+### 데이터가 저장되는 곳
+
+- 수집함과 북극성은 브라우저 localStorage의 `http://127.0.0.1:3107` 주소에만 저장됩니다. `localhost:3107`은 다른 주소로 취급되어 저장소가 따로 생기니 항상 같은 주소로 여세요.
+- 브라우저 데이터를 지우면 수집함도 사라집니다. 남겨야 할 결과는 markdown으로 내려받아 비공개 저장소나 로컬 폴더에 보관하세요.
+- 실제 맥락이나 export 파일을 이 공개 저장소에 커밋하지 마세요. `.ai/private/`, `.ai/raw/`, `*.private.md`는 `.gitignore`에 들어 있습니다.
+
+### 적용된 보안 장치
+
+- **127.0.0.1 바인딩:** 로컬 서버가 이 컴퓨터 안에서만 열립니다.
+- **Content Security Policy:** 페이지가 자기 주소가 아닌 곳으로 fetch, 이미지, 폼 요청을 보내지 못합니다. 의존성 코드가 오염되더라도 맥락을 외부로 보내는 대부분의 경로를 브라우저가 막습니다.
+- **추가 헤더:** `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`, 다른 사이트의 iframe 삽입 차단, 카메라·마이크·위치 권한 차단.
+
+### 한계
+
+- CSP는 페이지 이동으로 데이터를 넘기는 경우까지는 막지 못합니다. Next.js 부트스트랩 스크립트 때문에 인라인 스크립트도 허용되어 있습니다.
+- 브라우저 확장 프로그램은 페이지 내용을 읽을 수 있습니다. 확장 프로그램이 없는 전용 브라우저 프로필에서 쓰는 것이 가장 안전합니다.
+- `npm run dev`는 개발용이라 같은 네트워크에 열리고 CSP도 느슨합니다. 실제 맥락에는 `npm run local`을 쓰세요.
+
+### 업데이트
+
+변경 내용을 확인한 뒤 받습니다.
+
+```bash
+git pull
+npm ci
+npm audit --omit=dev
+npm run local
+```
 
 ## 로컬 개발
 

@@ -58,6 +58,13 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - The PPTX package was verified with `unzip -t`; it has 10 slides, 31 media files, 0 zero-byte media files, and no compressed data errors.
 - Backup demo video with Korean/English hard subtitles was generated at `/Users/letitbe/Desktop/context-boradori-demo-subtitled.mp4`.
 
+## Local secure usage
+
+- `npm run local` builds for production and serves only on `127.0.0.1:3107`, so other devices on the network cannot reach it.
+- `next.config.ts` sends a Content Security Policy (`default-src 'self'`, `connect-src 'self'`, `img-src 'self' data: blob:`, `form-action 'none'`, `frame-ancestors 'none'`, `object-src 'none'`) plus `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and a restrictive `Permissions-Policy`. Dev mode adds `'unsafe-eval'` and `ws:` for HMR.
+- The same headers apply to the Vercel demo. Vercel preview deployments may log CSP errors for the Vercel toolbar script; production is unaffected.
+- README/README.en have a local secure usage guide: run locally for real context, keep exports out of this public repo, and the CSP limits.
+
 ## Not started / future
 
 - Real LLM compression API

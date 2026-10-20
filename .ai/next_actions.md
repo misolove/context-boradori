@@ -45,3 +45,11 @@
 - [ ] Add MCP/CLI handoff integration
 - [ ] Add conflict detection and resolution UI for competing AI tool suggestions
 - [ ] Turn the editable north star into a reusable project doctrine
+
+## Local secure usage
+
+- [x] Add `npm run local` bound to 127.0.0.1
+- [x] Add CSP and security headers
+- [x] Document local secure usage in README/README.en
+- [ ] Consider hash-based `script-src` to drop `'unsafe-inline'` for scripts
+- [ ] Tag reviewed releases so local installs can pin to a tag

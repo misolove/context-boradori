@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "local": "next build && next start -H 127.0.0.1 -p 3107",
     "lint": "eslint"
   },
   "dependencies": {
