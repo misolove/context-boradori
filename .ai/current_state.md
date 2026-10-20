@@ -23,6 +23,7 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 ## Current implementation
 
 - Next.js App Router app with TypeScript and Tailwind CSS
+- Next.js and `eslint-config-next` are pinned to 16.4.2. `npm audit --omit=dev` reports 0 vulnerabilities; the old `overrides.postcss` pin was removed because Next 16.4.2 pins patched postcss 8.5.23 itself.
 - Single-page polished purple UI
 - Context paste form with project name and source tool selector
 - Local mock compression via `generateMockCompression`
@@ -60,6 +61,13 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Clicking a session node (or a tray title) opens a quick peek with that session's decisions, questions, and actions; "전체 결과 보기" scrolls to the per-session result panel, which is now titled with the session name.
 - Tray cards show a session gist (first concrete decision/action/idea/question) and counts instead of the repeated summary boilerplate.
 - The session map's Mermaid code can be copied for GitHub/Obsidian. Mermaid 12.2.0 is loaded with a dynamic import, so it is not part of the initial page bundle.
+
+## Local secure usage
+
+- `npm run local` builds for production and serves only on `127.0.0.1:3107`, so other devices on the network cannot reach it.
+- `next.config.ts` sends a Content Security Policy (`default-src 'self'`, `connect-src 'self'`, `img-src 'self' data: blob:`, `form-action 'none'`, `frame-ancestors 'none'`, `object-src 'none'`) plus `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and a restrictive `Permissions-Policy`. Dev mode adds `'unsafe-eval'` and `ws:` for HMR.
+- The same headers apply to the Vercel demo. Vercel preview deployments may log CSP errors for the Vercel toolbar script; production is unaffected.
+- README/README.en have a local secure usage guide: run locally for real context, keep exports out of this public repo, and the CSP limits.
 
 ## Not started / future
 

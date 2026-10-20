@@ -11,6 +11,8 @@ Paste scattered AI work context, and the app turns it into a session summary, de
 - Live demo: [https://context-boradori.vercel.app](https://context-boradori.vercel.app)
 - English view: [https://context-boradori.vercel.app/?lang=en](https://context-boradori.vercel.app/?lang=en)
 
+The public demo is for trying the features. For real work context, run it on your own machine as described in [Local Secure Usage](#local-secure-usage).
+
 ## Problem
 
 When people use several AI tools on the same project, the working context becomes fragmented. Decisions, open questions, and next actions get trapped in separate chats, and the user has to explain the same background again and again.
@@ -66,6 +68,55 @@ Context Boradori is a cute but smart AI context librarian. The brand verbs are *
 Do not paste API keys, passwords, tokens, private URLs, or private financial information into this app.
 
 The current MVP does not call external AI APIs and does not send raw context to a server. The common tray is stored only in the current browser for demo continuity. Future AI/API features should add stronger redaction and explicit user consent before sending any content outside the browser.
+
+## Local Secure Usage
+
+Put real work context only into a copy of Context Boradori running on your own machine. The app never sends context to a server, but running it locally means only code you have checked runs, and no other device can reach it.
+
+### Install and run
+
+```bash
+git clone https://github.com/misolove/context-boradori.git
+cd context-boradori
+npm ci
+npm run local
+```
+
+Open [http://127.0.0.1:3107](http://127.0.0.1:3107) in your browser.
+
+- `npm run local` makes a production build and serves it only on `127.0.0.1:3107`. Other devices on the same Wi-Fi cannot reach it.
+- `npm ci` installs exactly the versions pinned in `package-lock.json`.
+- To stay on a version you reviewed, run `git checkout <commit or tag>` first.
+- Optionally run `npx next telemetry disable` once to turn off Next.js anonymous telemetry.
+
+### Where data is stored
+
+- The tray and north star live in browser localStorage for `http://127.0.0.1:3107` only. `localhost:3107` counts as a different address with separate storage, so always open the same one.
+- Clearing browser data also clears the tray. Download results you want to keep as markdown and store them in a private repository or local folder.
+- Never commit real context or exports to this public repository. `.ai/private/`, `.ai/raw/`, and `*.private.md` are already in `.gitignore`.
+
+### Protections in place
+
+- **127.0.0.1 binding:** the local server only listens inside this machine.
+- **Content Security Policy:** the page cannot send fetch, image, or form requests anywhere but its own address. Even if dependency code were compromised, the browser blocks most ways of sending context out.
+- **Extra headers:** `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`, no embedding in other sites' iframes, and camera/microphone/location access disabled.
+
+### Limits
+
+- CSP cannot stop data leaving through a page navigation, and inline scripts stay allowed because Next.js bootstraps with them.
+- Browser extensions can read page content. A dedicated browser profile without extensions is the safest place to use it.
+- `npm run dev` is for development: it is reachable from your network and uses a looser CSP. Use `npm run local` for real context.
+
+### Updating
+
+Review the changes before pulling them in.
+
+```bash
+git pull
+npm ci
+npm audit --omit=dev
+npm run local
+```
 
 ## Local Development
 

@@ -28,6 +28,8 @@
 - [x] Sync Claude-polished hackathon presentation deck into repo output
 - [x] Add future-expansion slide to hackathon presentation deck
 - [x] Reflect future-expansion roadmap in Korean/English README
+- [x] Upgrade Next.js to 16.4.2 to clear the `npm audit --omit=dev` advisories
+- [ ] Recheck the dev-only `npm audit` highs (`eslint-config-next` → `fast-glob` → `micromatch` → `braces`) once a fixed release exists
 - [ ] Add local IndexedDB storage
 - [ ] Add stronger secret redaction before any future LLM call
 - [x] Add sample demo context variants
@@ -49,4 +51,12 @@
 - [x] Add a Mermaid session map with clickable session nodes and a quick peek
 - [ ] Decide whether `common-handoff.md` should embed the session map Mermaid block
 - [ ] Let users rename sessions so map labels stay meaningful beyond the auto gist
-- [ ] Upgrade Next.js to 16.4.2+ to clear the existing `npm audit --omit=dev` advisories (pre-existing, unrelated to Mermaid)
+- [x] Upgrade Next.js to 16.4.2+ to clear the existing `npm audit --omit=dev` advisories
+
+## Local secure usage
+
+- [x] Add `npm run local` bound to 127.0.0.1
+- [x] Add CSP and security headers
+- [x] Document local secure usage in README/README.en
+- [ ] Consider hash-based `script-src` to drop `'unsafe-inline'` for scripts
+- [ ] Tag reviewed releases so local installs can pin to a tag
