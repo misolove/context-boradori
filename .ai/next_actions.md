@@ -28,6 +28,8 @@
 - [x] Sync Claude-polished hackathon presentation deck into repo output
 - [x] Add future-expansion slide to hackathon presentation deck
 - [x] Reflect future-expansion roadmap in Korean/English README
+- [x] Upgrade Next.js to 16.4.2 to clear the `npm audit --omit=dev` advisories
+- [ ] Recheck the dev-only `npm audit` highs (`eslint-config-next` → `fast-glob` → `micromatch` → `braces`) once a fixed release exists
 - [ ] Add local IndexedDB storage
 - [ ] Add stronger secret redaction before any future LLM call
 - [x] Add sample demo context variants
@@ -43,3 +45,11 @@
 - [ ] Add MCP/CLI handoff integration
 - [ ] Add conflict detection and resolution UI for competing AI tool suggestions
 - [ ] Turn the editable north star into a reusable project doctrine
+
+## Local secure usage
+
+- [x] Add `npm run local` bound to 127.0.0.1
+- [x] Add CSP and security headers
+- [x] Document local secure usage in README/README.en
+- [ ] Consider hash-based `script-src` to drop `'unsafe-inline'` for scripts
+- [ ] Tag reviewed releases so local installs can pin to a tag

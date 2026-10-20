@@ -1,7 +1,7 @@
 # Current State
 
-Last updated: 2026-04-26
-Updated by: Codex
+Last updated: 2026-10-20
+Updated by: Claude Code
 
 ## Status
 
@@ -23,6 +23,7 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 ## Current implementation
 
 - Next.js App Router app with TypeScript and Tailwind CSS
+- Next.js and `eslint-config-next` are pinned to 16.4.2. `npm audit --omit=dev` reports 0 vulnerabilities; the old `overrides.postcss` pin was removed because Next 16.4.2 pins patched postcss 8.5.23 itself.
 - Single-page polished purple UI
 - Context paste form with project name and source tool selector
 - Local mock compression via `generateMockCompression`
@@ -56,6 +57,13 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - The Claude-polished PPTX package was extended with a final `08 · EXPANSION` slide covering handoff quality, memory/map improvements, and integrations.
 - The PPTX package was verified with `unzip -t`; it has 10 slides, 31 media files, 0 zero-byte media files, and no compressed data errors.
 - Backup demo video with Korean/English hard subtitles was generated at `/Users/letitbe/Desktop/context-boradori-demo-subtitled.mp4`.
+
+## Local secure usage
+
+- `npm run local` builds for production and serves only on `127.0.0.1:3107`, so other devices on the network cannot reach it.
+- `next.config.ts` sends a Content Security Policy (`default-src 'self'`, `connect-src 'self'`, `img-src 'self' data: blob:`, `form-action 'none'`, `frame-ancestors 'none'`, `object-src 'none'`) plus `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and a restrictive `Permissions-Policy`. Dev mode adds `'unsafe-eval'` and `ws:` for HMR.
+- The same headers apply to the Vercel demo. Vercel preview deployments may log CSP errors for the Vercel toolbar script; production is unaffected.
+- README/README.en have a local secure usage guide: run locally for real context, keep exports out of this public repo, and the CSP limits.
 
 ## Not started / future
 
