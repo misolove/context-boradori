@@ -1,7 +1,7 @@
 # Current State
 
-Last updated: 2026-04-26
-Updated by: Codex
+Last updated: 2026-10-20
+Updated by: Claude Code
 
 ## Status
 
@@ -23,6 +23,7 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 ## Current implementation
 
 - Next.js App Router app with TypeScript and Tailwind CSS
+- Next.js and `eslint-config-next` are pinned to 16.4.2. `npm audit --omit=dev` reports 0 vulnerabilities; the old `overrides.postcss` pin was removed because Next 16.4.2 pins patched postcss 8.5.23 itself.
 - Single-page polished purple UI
 - Context paste form with project name and source tool selector
 - Local mock compression via `generateMockCompression`

@@ -28,6 +28,8 @@
 - [x] Sync Claude-polished hackathon presentation deck into repo output
 - [x] Add future-expansion slide to hackathon presentation deck
 - [x] Reflect future-expansion roadmap in Korean/English README
+- [x] Upgrade Next.js to 16.4.2 to clear the `npm audit --omit=dev` advisories
+- [ ] Recheck the dev-only `npm audit` highs (`eslint-config-next` → `fast-glob` → `micromatch` → `braces`) once a fixed release exists
 - [ ] Add local IndexedDB storage
 - [ ] Add stronger secret redaction before any future LLM call
 - [x] Add sample demo context variants
