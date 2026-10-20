@@ -33,6 +33,7 @@ The key idea is not just summarization. It is the **north star**: confirmed deci
 - Multi-source common context tray
 - Common handoff merge from multiple AI tool sessions
 - Visual common-context map with a north-star direction
+- Mermaid session map that groups collected sessions by tool (click a node to open the session, copy the Mermaid code)
 - Editable project north star
 - Korean/English UI toggle
 - Browser `localStorage` persistence for demo continuity
@@ -49,7 +50,7 @@ The key idea is not just summarization. It is the **north star**: confirmed deci
 3. Add the context piece to the common tray.
 4. Review or edit the project north star.
 5. Choose the target AI tool and merge the common context.
-6. Review the common-context map and handoff exports.
+6. Review the common-context map and handoff exports. With many sessions, click a node in the session map to jump straight to that session.
 7. Copy or download the result for the next AI tool.
 
 ## Brand

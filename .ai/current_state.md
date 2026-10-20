@@ -1,7 +1,7 @@
 # Current State
 
-Last updated: 2026-04-26
-Updated by: Codex
+Last updated: 2026-10-20
+Updated by: Claude Code
 
 ## Status
 
@@ -56,6 +56,10 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - The Claude-polished PPTX package was extended with a final `08 · EXPANSION` slide covering handoff quality, memory/map improvements, and integrations.
 - The PPTX package was verified with `unzip -t`; it has 10 slides, 31 media files, 0 zero-byte media files, and no compressed data errors.
 - Backup demo video with Korean/English hard subtitles was generated at `/Users/letitbe/Desktop/context-boradori-demo-subtitled.mp4`.
+- A Mermaid session map (`src/components/SessionMap.tsx`, `src/lib/sessionMap.ts`) appears below the common tray once sessions exist. Sessions are grouped by source tool in collection order and all point to a shared-context hub that names the target tool.
+- Clicking a session node (or a tray title) opens a quick peek with that session's decisions, questions, and actions; "전체 결과 보기" scrolls to the per-session result panel, which is now titled with the session name.
+- Tray cards show a session gist (first concrete decision/action/idea/question) and counts instead of the repeated summary boilerplate.
+- The session map's Mermaid code can be copied for GitHub/Obsidian. Mermaid 12.2.0 is loaded with a dynamic import, so it is not part of the initial page bundle.
 
 ## Not started / future
 

@@ -43,3 +43,10 @@
 - [ ] Add MCP/CLI handoff integration
 - [ ] Add conflict detection and resolution UI for competing AI tool suggestions
 - [ ] Turn the editable north star into a reusable project doctrine
+
+## Session map follow-ups
+
+- [x] Add a Mermaid session map with clickable session nodes and a quick peek
+- [ ] Decide whether `common-handoff.md` should embed the session map Mermaid block
+- [ ] Let users rename sessions so map labels stay meaningful beyond the auto gist
+- [ ] Upgrade Next.js to 16.4.2+ to clear the existing `npm audit --omit=dev` advisories (pre-existing, unrelated to Mermaid)
