@@ -13,9 +13,12 @@ import {
 } from "@/lib/compression";
 import type { Locale } from "@/lib/i18n";
 import { uiText } from "@/lib/i18n";
+import { sessionFolder } from "@/lib/sessionFiles";
 import { digestPieces, formatCreatedAt } from "@/lib/sessionMap";
 
 const STORAGE_KEY = "context-boradori-context-pieces-v1";
+const MAX_TRAY_PIECES = 40;
+const SYNC_HEADERS = { "x-boradori-sync": "1" };
 const NORTH_STAR_STORAGE_KEY = "context-boradori-north-star-v1";
 const locales: Locale[] = ["ko", "en"];
 const defaultNorthStars: Record<Locale, string> = {
@@ -152,6 +155,12 @@ function createContextPiece(
   };
 }
 
+function newestFirst(pieces: ContextPiece[]) {
+  return [...pieces].sort(
+    (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt) || 0,
+  );
+}
+
 function isStoredContextPiece(value: unknown): value is ContextPiece {
   if (!value || typeof value !== "object") {
     return false;
@@ -191,6 +200,12 @@ export function ContextForm({ locale }: ContextFormProps) {
   );
   const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
   const [scrollToPieceRequest, setScrollToPieceRequest] = useState(0);
+  const [sharedDevice, setSharedDevice] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<{
+    text: string;
+    isError: boolean;
+  } | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
   const pieceResultRef = useRef<HTMLDivElement>(null);
 
@@ -226,7 +241,7 @@ export function ContextForm({ locale }: ContextFormProps) {
 
           if (Array.isArray(parsed)) {
             setContextPieces(
-              parsed.filter(isStoredContextPiece).slice(0, 12),
+              parsed.filter(isStoredContextPiece).slice(0, MAX_TRAY_PIECES),
             );
           }
         }
@@ -291,7 +306,7 @@ export function ContextForm({ locale }: ContextFormProps) {
 
       window.localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify(contextPieces.slice(0, 12)),
+        JSON.stringify(contextPieces.slice(0, MAX_TRAY_PIECES)),
       );
     } catch {
       window.localStorage.removeItem(STORAGE_KEY);
@@ -311,6 +326,25 @@ export function ContextForm({ locale }: ContextFormProps) {
       window.localStorage.removeItem(northStarStorageKey);
     }
   }, [projectNorthStar, isHydrated, locale]);
+
+  // Session sharing is only on when the local server has .boradori/config.json;
+  // the public demo answers 403 and the controls stay hidden.
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch("/api/sessions", { headers: SYNC_HEADERS })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: { enabled?: boolean; device?: string } | null) => {
+        if (!cancelled && data?.enabled && typeof data.device === "string") {
+          setSharedDevice(data.device);
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (scrollToPieceRequest === 0) {
@@ -358,7 +392,9 @@ export function ContextForm({ locale }: ContextFormProps) {
       locale,
     );
 
-    setContextPieces((pieces) => [nextPiece, ...pieces].slice(0, 12));
+    setContextPieces((pieces) =>
+      [nextPiece, ...pieces].slice(0, MAX_TRAY_PIECES),
+    );
     setResult(nextPiece.result);
     setSelectedPieceId(nextPiece.id);
     setMergedResult(null);
@@ -377,7 +413,9 @@ export function ContextForm({ locale }: ContextFormProps) {
       ),
     );
 
-    setContextPieces((pieces) => [...samplePieces, ...pieces].slice(0, 12));
+    setContextPieces((pieces) =>
+      [...samplePieces, ...pieces].slice(0, MAX_TRAY_PIECES),
+    );
     setResult(samplePieces[0]?.result ?? null);
     setSelectedPieceId(samplePieces[0]?.id ?? null);
     setMergedResult(null);
@@ -394,6 +432,48 @@ export function ContextForm({ locale }: ContextFormProps) {
         locale,
       }),
     );
+  }
+
+  async function handleSyncSessions() {
+    setIsSyncing(true);
+    setSyncMessage(null);
+
+    try {
+      const response = await fetch("/api/sessions", {
+        method: "POST",
+        headers: { ...SYNC_HEADERS, "content-type": "application/json" },
+        body: JSON.stringify({ projectName, pieces: contextPieces }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`sync failed: ${response.status}`);
+      }
+
+      const data = (await response.json()) as {
+        written: number;
+        pieces: unknown[];
+      };
+      const shared = data.pieces.filter(isStoredContextPiece);
+      const sharedIds = new Set(shared.map((piece) => piece.id));
+      const localIds = new Set(contextPieces.map((piece) => piece.id));
+      const incoming = shared.filter((piece) => !localIds.has(piece.id));
+
+      setContextPieces(
+        newestFirst([
+          ...shared,
+          ...contextPieces.filter((piece) => !sharedIds.has(piece.id)),
+        ]).slice(0, MAX_TRAY_PIECES),
+      );
+      setMergedResult(null);
+      setSyncMessage({
+        text: text.syncDone(data.written, incoming.length),
+        isError: false,
+      });
+    } catch {
+      setSyncMessage({ text: text.syncError, isError: true });
+    } finally {
+      setIsSyncing(false);
+    }
   }
 
   function handleSelectPiece(pieceId: string) {
@@ -704,6 +784,42 @@ export function ContextForm({ locale }: ContextFormProps) {
               </div>
             </div>
 
+            {sharedDevice ? (
+              <div className="space-y-2 rounded-lg border border-[#B094FF]/60 bg-white p-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-[#3b168c]">
+                      {text.sharedLabel}
+                    </p>
+                    <p className="text-xs leading-5 text-[#6B6B7B]">
+                      {text.sharedDescription(
+                        sessionFolder(projectName),
+                        sharedDevice,
+                      )}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSyncSessions}
+                    disabled={isSyncing || !projectName.trim()}
+                    className="h-10 shrink-0 rounded-lg border border-[#8A5CF6] bg-[#F5F1FF] px-4 text-sm font-bold text-[#3b168c] transition hover:bg-[#EDE5FF] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/30"
+                  >
+                    {isSyncing ? text.syncing : text.syncButton}
+                  </button>
+                </div>
+                {syncMessage ? (
+                  <p
+                    className={`text-xs leading-5 ${
+                      syncMessage.isError ? "text-[#9F1239]" : "text-[#126B42]"
+                    }`}
+                    aria-live="polite"
+                  >
+                    {syncMessage.text}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+
             {contextPieces.length === 0 ? (
               <div className="rounded-lg border border-dashed border-[#B094FF] bg-white p-5 text-sm leading-6 text-[#6B6B7B]">
                 {text.emptyTray}
@@ -735,6 +851,7 @@ export function ContextForm({ locale }: ContextFormProps) {
                                 )}{" "}
                                 {text.chars} ·{" "}
                                 {formatCreatedAt(piece.createdAt, locale)}
+                                {piece.device ? ` · ${piece.device}` : ""}
                               </span>
                             </div>
                             <h4 className="mt-2 truncate text-sm font-bold text-[#2D185D]">

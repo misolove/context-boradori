@@ -80,3 +80,6 @@ temp/
 !.vscode/extensions.json
 !.vscode/settings.example.json
 .idea
+
+# Per-device config for sharing sessions through the private memory repo
+.boradori/

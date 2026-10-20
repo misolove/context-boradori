@@ -53,6 +53,13 @@
 - [ ] Let users rename sessions so map labels stay meaningful beyond the auto gist
 - [x] Upgrade Next.js to 16.4.2+ to clear the existing `npm audit --omit=dev` advisories
 
+## Session sharing follow-ups
+
+- [x] Share tray sessions across devices through the private memory repo
+- [ ] Decide how deletes should propagate (today a tray delete is local only)
+- [ ] Map project names to existing private folders (e.g. `projects/context-boradori`) instead of slugging the current name
+- [ ] Consider automatic collection of local AI tool sessions (Claude Code, Codex) as a separate, opt-in feature
+
 ## Local secure usage
 
 - [x] Add `npm run local` bound to 127.0.0.1

@@ -118,6 +118,48 @@ npm audit --omit=dev
 npm run local
 ```
 
+## Sharing Sessions Across Devices (Private Repository)
+
+Tray sessions from one device can be opened on another through a private repository. Each session is saved as one markdown file (`projects/<project>/sessions/*.md`) and exchanged with git. Neither the config nor any session goes into this public repository.
+
+### Setup (once per device)
+
+1. Clone your private repository.
+
+   ```bash
+   git clone https://github.com/<you>/context-boradori-memory.git
+   ```
+
+2. Create `.boradori/config.json` in the app folder. `.boradori/` is ignored by git.
+
+   ```json
+   {
+     "memoryWorkspacePath": "/absolute/path/to/context-boradori-memory",
+     "deviceName": "macbook-air"
+   }
+   ```
+
+   Give each device a different `deviceName` using letters, digits, `.`, `_`, or `-`.
+
+3. Run `npm run local`. A **Share across devices** box appears in the tray.
+
+### Order of steps
+
+- **Sending device:** click **Sync with shared folder** in the app, then run `npm run sync` in a terminal.
+- **Receiving device:** run `npm run sync`, then click **Sync with shared folder** in the app.
+
+`npm run sync` commits only changes in the session folders (`projects/*/sessions/`), pulls other devices' commits, and pushes. Other files in the private repository are left alone.
+
+### How it behaves
+
+- The shared folder follows the current **project name**, e.g. `Context Boradori` → `projects/context-boradori/sessions`.
+- Each session carries the name of the device that first shared it, shown in the tray and the session map.
+- Existing files are never overwritten, so a session edited by hand in the private repository keeps the edit. Files with broken markers are skipped.
+- Deleting a session from the tray does not delete it from the shared folder. To remove it everywhere, delete the file and run `npm run sync`.
+- Raw context is never stored, only the organized result, and API key/token patterns are redacted once more before saving.
+- The sharing API is only on when the local server has `.boradori/config.json`, and it only accepts requests from the app at the same address.
+- The tray keeps the latest 40 sessions.
+
 ## Local Development
 
 ```bash
