@@ -106,6 +106,36 @@ export const uiText = {
       pieceResultDescription:
         "현재 입력 또는 최근 추가된 맥락 조각의 mock 정리본입니다.",
       pieceTitle: (tool: string, count: number) => `${tool} 맥락 ${count}`,
+      sessionDetailTitle: (title: string) => `세션 상세 · ${title}`,
+      sessionDetailDescription: (tool: string, time: string) =>
+        `${tool} · ${time}에 수집한 세션의 mock 정리본입니다.`,
+      openSession: (title: string) => `${title} 세션 열기`,
+    },
+    sessionMap: {
+      ariaLabel: "세션 지도",
+      eyebrow: "Session map",
+      title: "세션 지도",
+      description:
+        "수집한 세션을 도구별로 묶은 Mermaid 다이어그램입니다. 노드를 누르면 그 세션의 핵심이 바로 펼쳐집니다.",
+      copyMermaid: "Mermaid 복사",
+      copied: "복사됨",
+      hub: "공통맥락",
+      hubMerged: "병합 완료",
+      hubPending: "병합 전",
+      counts: (decisions: number, questions: number, actions: number) =>
+        `결정 ${decisions} · 질문 ${questions} · 할 일 ${actions}`,
+      gistFallback: "요약할 핵심 줄을 찾지 못했습니다.",
+      loading: "다이어그램을 그리는 중…",
+      error:
+        "다이어그램을 그리지 못했습니다. 수집함 목록에서 세션 제목을 눌러도 열 수 있어요.",
+      peekLabel: "선택한 세션",
+      peekEmpty:
+        "다이어그램에서 세션 노드를 누르면 결정·질문·할 일이 여기에 펼쳐집니다.",
+      decisions: "결정",
+      questions: "질문",
+      actions: "할 일",
+      none: "없음",
+      openDetail: "전체 결과 보기",
     },
     contextMap: {
       ariaLabel: "공통맥락 지도",
@@ -241,6 +271,36 @@ export const uiText = {
       pieceResultDescription:
         "A mock summary for the current input or most recently added context piece.",
       pieceTitle: (tool: string, count: number) => `${tool} context ${count}`,
+      sessionDetailTitle: (title: string) => `Session · ${title}`,
+      sessionDetailDescription: (tool: string, time: string) =>
+        `Mock summary of the session collected from ${tool} at ${time}.`,
+      openSession: (title: string) => `Open session ${title}`,
+    },
+    sessionMap: {
+      ariaLabel: "Session map",
+      eyebrow: "Session map",
+      title: "Session Map",
+      description:
+        "A Mermaid diagram of collected sessions grouped by tool. Click a node to open that session's key points.",
+      copyMermaid: "Copy Mermaid",
+      copied: "Copied",
+      hub: "Shared context",
+      hubMerged: "Merged",
+      hubPending: "Not merged yet",
+      counts: (decisions: number, questions: number, actions: number) =>
+        `Decisions ${decisions} · Questions ${questions} · Actions ${actions}`,
+      gistFallback: "No key line found to summarize.",
+      loading: "Drawing the diagram…",
+      error:
+        "The diagram could not be drawn. You can still open sessions by clicking their titles in the tray.",
+      peekLabel: "Selected session",
+      peekEmpty:
+        "Click a session node in the diagram to see its decisions, questions, and actions here.",
+      decisions: "Decisions",
+      questions: "Questions",
+      actions: "Actions",
+      none: "None",
+      openDetail: "Open full result",
     },
     contextMap: {
       ariaLabel: "Common context map",

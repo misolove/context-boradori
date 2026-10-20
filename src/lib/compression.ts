@@ -101,7 +101,7 @@ function toBulletList(lines: string[], fallback: string) {
   return lines.map((line) => `- ${line}`).join("\n");
 }
 
-function sectionLines(text: string) {
+export function sectionLines(text: string) {
   return normalizeLines(text).filter((line) => !fallbackPattern.test(line));
 }
 

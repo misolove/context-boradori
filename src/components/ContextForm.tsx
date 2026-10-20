@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ContextMap } from "@/components/ContextMap";
 import { ResultPanel } from "@/components/ResultPanel";
+import { SessionMap } from "@/components/SessionMap";
 import {
   CompressionResult,
   ContextPiece,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/compression";
 import type { Locale } from "@/lib/i18n";
 import { uiText } from "@/lib/i18n";
+import { digestPieces, formatCreatedAt } from "@/lib/sessionMap";
 
 const STORAGE_KEY = "context-boradori-context-pieces-v1";
 const NORTH_STAR_STORAGE_KEY = "context-boradori-north-star-v1";
@@ -169,31 +171,6 @@ function isStoredContextPiece(value: unknown): value is ContextPiece {
   );
 }
 
-function formatCreatedAt(value: string, locale: Locale) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return uiText[locale].context.justNow;
-  }
-
-  return new Intl.DateTimeFormat(locale === "ko" ? "ko-KR" : "en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
-
-function previewSummary(result: CompressionResult) {
-  const compact = result.sessionSummary.replace(/\s+/g, " ").trim();
-
-  if (compact.length <= 180) {
-    return compact;
-  }
-
-  return `${compact.slice(0, 180).trim()}...`;
-}
-
 type ContextFormProps = {
   locale: Locale;
 };
@@ -212,7 +189,10 @@ export function ContextForm({ locale }: ContextFormProps) {
   const [mergedResult, setMergedResult] = useState<CompressionResult | null>(
     null,
   );
+  const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
+  const [scrollToPieceRequest, setScrollToPieceRequest] = useState(0);
   const [isHydrated, setIsHydrated] = useState(false);
+  const pieceResultRef = useRef<HTMLDivElement>(null);
 
   const characterCount = useMemo(
     () => rawContext.trim().length,
@@ -223,6 +203,16 @@ export function ContextForm({ locale }: ContextFormProps) {
       contextPieces.reduce((total, piece) => total + piece.characterCount, 0),
     [contextPieces],
   );
+  const pieceDigests = useMemo(
+    () =>
+      new Map(
+        digestPieces(contextPieces).map((digest) => [digest.piece.id, digest]),
+      ),
+    [contextPieces],
+  );
+  const selectedPiece = selectedPieceId
+    ? pieceDigests.get(selectedPieceId)?.piece
+    : undefined;
   const projectNorthStar = projectNorthStars[locale];
   const effectiveNorthStar = projectNorthStar.trim() || text.defaultNorthStar;
 
@@ -322,8 +312,20 @@ export function ContextForm({ locale }: ContextFormProps) {
     }
   }, [projectNorthStar, isHydrated, locale]);
 
+  useEffect(() => {
+    if (scrollToPieceRequest === 0) {
+      return;
+    }
+
+    pieceResultRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [scrollToPieceRequest]);
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSelectedPieceId(null);
     setResult(
       generateMockCompression({
         projectName,
@@ -339,6 +341,7 @@ export function ContextForm({ locale }: ContextFormProps) {
     setSourceTool(nextSourceTool);
     setRawContext("");
     setResult(null);
+    setSelectedPieceId(null);
   }
 
   function handleAddContextPiece() {
@@ -357,6 +360,7 @@ export function ContextForm({ locale }: ContextFormProps) {
 
     setContextPieces((pieces) => [nextPiece, ...pieces].slice(0, 12));
     setResult(nextPiece.result);
+    setSelectedPieceId(nextPiece.id);
     setMergedResult(null);
     setRawContext("");
   }
@@ -375,6 +379,7 @@ export function ContextForm({ locale }: ContextFormProps) {
 
     setContextPieces((pieces) => [...samplePieces, ...pieces].slice(0, 12));
     setResult(samplePieces[0]?.result ?? null);
+    setSelectedPieceId(samplePieces[0]?.id ?? null);
     setMergedResult(null);
     setRawContext("");
   }
@@ -391,21 +396,48 @@ export function ContextForm({ locale }: ContextFormProps) {
     );
   }
 
+  function handleSelectPiece(pieceId: string) {
+    const piece = pieceDigests.get(pieceId)?.piece;
+
+    if (!piece) {
+      return;
+    }
+
+    setSelectedPieceId(piece.id);
+    setResult(piece.result);
+  }
+
+  function handleOpenPiece(pieceId: string) {
+    handleSelectPiece(pieceId);
+    setScrollToPieceRequest((count) => count + 1);
+  }
+
   function handleRemoveContextPiece(pieceId: string) {
     setContextPieces((pieces) =>
       pieces.filter((piece) => piece.id !== pieceId),
     );
     setMergedResult(null);
+
+    if (pieceId === selectedPieceId) {
+      setSelectedPieceId(null);
+      setResult(null);
+    }
   }
 
   function handleClearContextPieces() {
     setContextPieces([]);
     setMergedResult(null);
+
+    if (selectedPieceId) {
+      setSelectedPieceId(null);
+      setResult(null);
+    }
   }
 
   function handleClearContext() {
     setRawContext("");
     setResult(null);
+    setSelectedPieceId(null);
   }
 
   return (
@@ -679,42 +711,65 @@ export function ContextForm({ locale }: ContextFormProps) {
             ) : (
               <div className="space-y-3">
                 <ul className="max-h-[31rem] space-y-3 overflow-auto pr-1">
-                  {contextPieces.map((piece) => (
-                    <li
-                      key={piece.id}
-                      className="rounded-lg border border-[#E6E0FF] bg-white p-3"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="rounded-lg bg-[#F5F1FF] px-2 py-1 text-xs font-bold text-[#3b168c]">
-                              {piece.sourceTool}
-                            </span>
-                            <span className="text-xs font-semibold text-[#6B6B7B]">
-                              {piece.characterCount.toLocaleString(
-                                numberLocale,
-                              )}{" "}
-                              {text.chars} ·{" "}
-                              {formatCreatedAt(piece.createdAt, locale)}
-                            </span>
+                  {contextPieces.map((piece) => {
+                    const digest = pieceDigests.get(piece.id);
+
+                    return (
+                      <li
+                        key={piece.id}
+                        className={`rounded-lg border bg-white p-3 ${
+                          piece.id === selectedPieceId
+                            ? "border-[#8A5CF6] ring-2 ring-[#B094FF]/30"
+                            : "border-[#E6E0FF]"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="rounded-lg bg-[#F5F1FF] px-2 py-1 text-xs font-bold text-[#3b168c]">
+                                {piece.sourceTool}
+                              </span>
+                              <span className="text-xs font-semibold text-[#6B6B7B]">
+                                {piece.characterCount.toLocaleString(
+                                  numberLocale,
+                                )}{" "}
+                                {text.chars} ·{" "}
+                                {formatCreatedAt(piece.createdAt, locale)}
+                              </span>
+                            </div>
+                            <h4 className="mt-2 truncate text-sm font-bold text-[#2D185D]">
+                              <button
+                                type="button"
+                                onClick={() => handleOpenPiece(piece.id)}
+                                aria-label={text.openSession(piece.title)}
+                                className="max-w-full truncate text-left underline-offset-4 hover:text-[#6A46E2] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B094FF]"
+                              >
+                                {piece.title}
+                              </button>
+                            </h4>
                           </div>
-                          <h4 className="mt-2 truncate text-sm font-bold text-[#2D185D]">
-                            {piece.title}
-                          </h4>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveContextPiece(piece.id)}
+                            className="h-8 shrink-0 rounded-lg border border-[#FFB0C6] bg-white px-3 text-xs font-bold text-[#9F1239] transition hover:bg-[#FFF1F5] focus:outline-none focus:ring-4 focus:ring-[#FFB0C6]/25"
+                          >
+                            {text.delete}
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveContextPiece(piece.id)}
-                          className="h-8 shrink-0 rounded-lg border border-[#FFB0C6] bg-white px-3 text-xs font-bold text-[#9F1239] transition hover:bg-[#FFF1F5] focus:outline-none focus:ring-4 focus:ring-[#FFB0C6]/25"
-                        >
-                          {text.delete}
-                        </button>
-                      </div>
-                      <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#56536B]">
-                        {previewSummary(piece.result)}
-                      </p>
-                    </li>
-                  ))}
+                        <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#56536B]">
+                          {digest?.gist ||
+                            uiText[locale].sessionMap.gistFallback}
+                        </p>
+                        <p className="mt-1 text-xs font-semibold text-[#8A5CF6]">
+                          {uiText[locale].sessionMap.counts(
+                            digest?.decisions.length ?? 0,
+                            digest?.questions.length ?? 0,
+                            digest?.actions.length ?? 0,
+                          )}
+                        </p>
+                      </li>
+                    );
+                  })}
                 </ul>
                 <button
                   type="button"
@@ -727,6 +782,20 @@ export function ContextForm({ locale }: ContextFormProps) {
             )}
           </section>
         </div>
+
+        {contextPieces.length > 0 ? (
+          <SessionMap
+            pieces={contextPieces}
+            projectName={projectName}
+            northStar={effectiveNorthStar}
+            targetTool={targetTool}
+            isMerged={Boolean(mergedResult)}
+            selectedPieceId={selectedPieceId}
+            onSelectPiece={handleSelectPiece}
+            onOpenPiece={handleOpenPiece}
+            locale={locale}
+          />
+        ) : null}
 
         {mergedResult ? (
           <ResultPanel
@@ -743,13 +812,26 @@ export function ContextForm({ locale }: ContextFormProps) {
         ) : null}
 
         {result ? (
-          <ResultPanel
-            result={result}
-            title={text.pieceResultTitle}
-            description={text.pieceResultDescription}
-            initialSection="sessionSummary"
-            locale={locale}
-          />
+          <div ref={pieceResultRef} className="scroll-mt-4">
+            <ResultPanel
+              result={result}
+              title={
+                selectedPiece
+                  ? text.sessionDetailTitle(selectedPiece.title)
+                  : text.pieceResultTitle
+              }
+              description={
+                selectedPiece
+                  ? text.sessionDetailDescription(
+                      selectedPiece.sourceTool,
+                      formatCreatedAt(selectedPiece.createdAt, locale),
+                    )
+                  : text.pieceResultDescription
+              }
+              initialSection="sessionSummary"
+              locale={locale}
+            />
+          </div>
         ) : null}
       </div>
     </div>

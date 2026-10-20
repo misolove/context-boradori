@@ -44,3 +44,31 @@ textarea {
 textarea {
   resize: vertical;
 }
+
+.session-map-canvas svg {
+  display: block;
+  max-width: none;
+}
+
+.session-map-canvas .session-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.session-map-canvas .session-node .label-container {
+  transition:
+    fill 120ms ease,
+    stroke 120ms ease;
+}
+
+.session-map-canvas .session-node:hover .label-container,
+.session-map-canvas .session-node:focus-visible .label-container {
+  fill: #fcfaff !important;
+  stroke: #6a46e2 !important;
+}
+
+.session-map-canvas .session-node.is-selected .label-container {
+  fill: #f5f1ff !important;
+  stroke: #6a46e2 !important;
+  stroke-width: 3px !important;
+}
