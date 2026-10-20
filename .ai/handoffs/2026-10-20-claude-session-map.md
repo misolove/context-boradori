@@ -30,6 +30,7 @@ Made many collected sessions easy to tell apart and reach. The tray only showed 
 - `npx tsc --noEmit`, `npm run lint`, `npm run build`
 - Browser QA on the dev server: parallel samples, node click and selection highlight, quick peek, tray title click scrolling to the session result, deleting the selected session, copy output, English `?lang=en`, 375px mobile width (diagram scrolls inside its box, no page overflow)
 - Escaping check with a session containing HTML tags, quotes, `#`, `&`, backticks, and `-->`: rendered as literal text, no injected elements
+- Directive check: a pasted `%%{init: ...}%%` could not change the theme or CSS, but it made the whole map fail to render. `%` is now encoded too, and a stress session (fake `click ... call`, `subgraph`/`end`, brackets, a crafted tool name and title) renders as literal text
 - Confirmed Mermaid is not in the initial page chunks
 - `npm audit --omit=dev`: only the pre-existing Next.js/sharp/postcss advisories remain; Mermaid 12.2.0 adds none
 

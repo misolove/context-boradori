@@ -93,10 +93,12 @@ export function formatCreatedAt(value: string, locale: Locale) {
 }
 
 // Mermaid entity codes keep pasted text from breaking the diagram syntax or
-// being read as HTML inside the label.
+// being read as HTML inside the label. `%` is encoded so a pasted
+// `%%{init: ...}%%` cannot act as a directive and break the whole map.
 function mermaidText(value: string, maxLength: number) {
   return clip(value, maxLength)
     .replace(/#/g, "#35;")
+    .replace(/%/g, "#37;")
     .replace(/&/g, "#38;")
     .replace(/"/g, "#quot;")
     .replace(/</g, "#lt;")
