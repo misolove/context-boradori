@@ -69,6 +69,14 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - The same headers apply to the Vercel demo. Vercel preview deployments may log CSP errors for the Vercel toolbar script; production is unaffected.
 - README/README.en have a local secure usage guide: run locally for real context, keep exports out of this public repo, and the CSP limits.
 
+## Sharing sessions across devices
+
+- Tray sessions can be shared through the private `context-boradori-memory` repository. Each session is one markdown file at `projects/<project-slug>/sessions/<created>-<tool>-<id8>.md` with JSON-valued frontmatter and core sections wrapped in id-salted markers; exports are rebuilt on import.
+- `src/app/api/sessions/route.ts` (local only): GET reports whether sharing is on and the device name; POST writes tray pieces the folder does not have yet (create-only) and returns every session in the folder. It requires the `x-boradori-sync` header, a localhost Host, and a same-origin Origin.
+- `.boradori/config.json` (gitignored) holds `memoryWorkspacePath` and `deviceName`. Without it, sharing is off and the UI hides the controls (the Vercel demo answers 403).
+- `npm run sync` (`scripts/sync-sessions.mjs`) commits only `projects/*/sessions/` changes in the private repo, pulls with rebase, and pushes.
+- Pieces carry an optional `device` shown in the tray, session map, and quick peek. The tray limit went from 12 to 40.
+
 ## Not started / future
 
 - Real LLM compression API

@@ -46,6 +46,8 @@ export type ContextPiece = {
   sourceTool: SourceTool;
   characterCount: number;
   createdAt: string;
+  // Set once the piece has been shared through the private session folder.
+  device?: string;
   result: CompressionResult;
 };
 

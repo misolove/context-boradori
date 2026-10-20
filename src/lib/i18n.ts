@@ -110,6 +110,15 @@ export const uiText = {
       sessionDetailDescription: (tool: string, time: string) =>
         `${tool} · ${time}에 수집한 세션의 mock 정리본입니다.`,
       openSession: (title: string) => `${title} 세션 열기`,
+      sharedLabel: "기기 간 공유",
+      sharedDescription: (folder: string, device: string) =>
+        `비공개 저장소의 ${folder} 폴더와 수집함을 맞춥니다. 이 기기: ${device}`,
+      syncButton: "공유 폴더와 동기화",
+      syncing: "동기화 중…",
+      syncDone: (written: number, incoming: number) =>
+        `${written}개 저장 · ${incoming}개 새로 불러옴. 다른 기기와 주고받으려면 터미널에서 npm run sync를 실행하세요.`,
+      syncError:
+        "동기화하지 못했습니다. .boradori/config.json의 저장소 경로를 확인하세요.",
     },
     sessionMap: {
       ariaLabel: "세션 지도",
@@ -275,6 +284,15 @@ export const uiText = {
       sessionDetailDescription: (tool: string, time: string) =>
         `Mock summary of the session collected from ${tool} at ${time}.`,
       openSession: (title: string) => `Open session ${title}`,
+      sharedLabel: "Share across devices",
+      sharedDescription: (folder: string, device: string) =>
+        `Syncs the tray with ${folder} in the private repository. This device: ${device}`,
+      syncButton: "Sync with shared folder",
+      syncing: "Syncing…",
+      syncDone: (written: number, incoming: number) =>
+        `${written} saved · ${incoming} new loaded. Run npm run sync in a terminal to exchange with other devices.`,
+      syncError:
+        "Could not sync. Check the repository path in .boradori/config.json.",
     },
     sessionMap: {
       ariaLabel: "Session map",

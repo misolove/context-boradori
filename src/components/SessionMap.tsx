@@ -306,6 +306,7 @@ export function SessionMap({
                     {formatCreatedAt(selected.piece.createdAt, locale)} ·{" "}
                     {selected.piece.characterCount.toLocaleString(numberLocale)}{" "}
                     {contextText.chars}
+                    {selected.piece.device ? ` · ${selected.piece.device}` : ""}
                   </span>
                 </div>
                 <h4 className="mt-2 text-base font-bold text-[#2D185D]">

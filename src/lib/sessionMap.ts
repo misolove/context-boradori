@@ -143,7 +143,12 @@ export function buildSessionMermaid({
       const { piece } = digest;
       const label = [
         `<b>${mermaidText(piece.title, 40)}</b>`,
-        `<small>${mermaidText(formatCreatedAt(piece.createdAt, locale), 24)}</small>`,
+        `<small>${mermaidText(
+          [formatCreatedAt(piece.createdAt, locale), piece.device]
+            .filter(Boolean)
+            .join(" · "),
+          48,
+        )}</small>`,
         mermaidText(digest.gist || text.gistFallback, 64),
         `<small>${text.counts(
           digest.decisions.length,
