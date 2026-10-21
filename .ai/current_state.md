@@ -1,6 +1,6 @@
 # Current State
 
-Last updated: 2026-10-20
+Last updated: 2026-10-22
 Updated by: Claude Code
 
 ## Status
@@ -29,7 +29,7 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Local mock compression via `generateMockCompression`
 - Result panels for summary, decisions, ideas, questions, actions, handoff, and agent exports
 - Copy buttons and markdown download buttons
-- Basic sensitive text redaction for common API key/token/database URL patterns
+- Sensitive text redaction (`src/lib/security.ts`) for OpenAI-style keys, `*_API_KEY/SECRET/TOKEN/DATABASE_URL=` assignments, postgres URLs, Bearer tokens, private key blocks (through the END line), GitHub tokens (`ghp_`/`gho_`/`ghu_`/`ghs_`/`ghr_`, `github_pat_`), AWS access key ids (`AKIA`/`ASIA`), Slack tokens (`xox[abpr]-`), JWTs, and `password=` / `passwd:` assignments. A `password:` value is redacted only when quoted or a single ASCII word ending the line, so prose stays.
 - Vercel project connected to `misolove/context-boradori`
 - Brand images added under `public/brand/`
 - UI palette and copy aligned with the generated brand boards
@@ -71,11 +71,20 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 
 ## Sharing sessions across devices
 
-- Tray sessions can be shared through the private `context-boradori-memory` repository. Each session is one markdown file at `projects/<project-slug>/sessions/<created>-<tool>-<id8>.md` with JSON-valued frontmatter and core sections wrapped in id-salted markers; exports are rebuilt on import.
-- `src/app/api/sessions/route.ts` (local only): GET reports whether sharing is on and the device name; POST writes tray pieces the folder does not have yet (create-only) and returns every session in the folder. It requires the `x-boradori-sync` header, a localhost Host, and a same-origin Origin.
+- Tray sessions can be shared through the private `context-boradori-memory` repository. Each session is one markdown file at `projects/<folder-slug>/sessions/<created>-<tool>-<id8>.md` with JSON-valued frontmatter and core sections wrapped in id-salted markers; exports are rebuilt on import.
+- Session files carry `format: 1`. A file without `format` is read as version 1; any other value is skipped so an old app never misreads a newer file.
+- The shared folder is a stored, editable slug in the share box (localStorage `context-boradori-share-folder-v1`, default `context-boradori`), not the project name. The language toggle swaps `맥락 보라돌이` ↔ `Context Boradori` but no longer changes the folder.
+- `src/app/api/sessions/route.ts` (local only): GET reports whether sharing is on and the device name; POST takes `{ projectName, folder, pieces }`, rejects a `folder` that is not already a slug, writes tray pieces the folder does not have yet (create-only), and returns every session in the folder plus `skipped` (unreadable `.md` files, named in the server log). The tray shows "파일 N개를 읽지 못했습니다" / "Could not read N files". It requires the `x-boradori-sync` header, a localhost Host, and a same-origin Origin.
 - `.boradori/config.json` (gitignored) holds `memoryWorkspacePath` and `deviceName`. Without it, sharing is off and the UI hides the controls (the Vercel demo answers 403).
 - `npm run sync` (`scripts/sync-sessions.mjs`) commits only `projects/*/sessions/` changes in the private repo, pulls with rebase, and pushes.
 - Pieces carry an optional `device` shown in the tray, session map, and quick peek. The tray limit went from 12 to 40.
+
+## Tests
+
+- `npm test` runs vitest 4.1.12 (`vitest.config.mts`, `src/**/*.test.ts`). vitest 5 was skipped because it drops `@types/node` 20 from its peer range.
+- `src/lib/sessionFiles.test.ts`: exact round trip of all 10 result fields (Korean, English, fake-marker pieces), pasted markers, missing/changed markers, CRLF, format version, `projectSlug` and folder validation.
+- `src/lib/sessionMap.test.ts`: Mermaid label escaping for quotes, `#`, `%`, `<`, `>`, backticks, `%%{init}%%`, newlines, and hostile tool names.
+- `src/lib/security.test.ts`: redaction hits and near-misses.
 
 ## Not started / future
 

@@ -31,7 +31,8 @@
 - [x] Upgrade Next.js to 16.4.2 to clear the `npm audit --omit=dev` advisories
 - [ ] Recheck the dev-only `npm audit` highs (`eslint-config-next` → `fast-glob` → `micromatch` → `braces`) once a fixed release exists
 - [ ] Add local IndexedDB storage
-- [ ] Add stronger secret redaction before any future LLM call
+- [x] Broaden secret redaction (GitHub, AWS, Slack, JWT, passwords, full private key blocks) with tests
+- [ ] Review redaction again before any future LLM call (e.g. credentials in non-postgres URLs like `mysql://user:pass@`)
 - [x] Add sample demo context variants
 - [ ] Add product-flow screenshots to README
 - [x] Record backup demo video for submission
@@ -57,7 +58,9 @@
 
 - [x] Share tray sessions across devices through the private memory repo
 - [ ] Decide how deletes should propagate (today a tray delete is local only)
-- [ ] Map project names to existing private folders (e.g. `projects/context-boradori`) instead of slugging the current name
+- [x] Keep a stable, editable shared folder (default `context-boradori`) instead of slugging the current project name
+- [x] Add automated tests, a `format` version, and a skipped-file count to session sharing
+- [ ] Decide whether the shared folder should follow a project picker once projects are more than one name field
 - [ ] Consider automatic collection of local AI tool sessions (Claude Code, Codex) as a separate, opt-in feature
 
 ## Local secure usage

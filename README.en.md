@@ -120,7 +120,7 @@ npm run local
 
 ## Sharing Sessions Across Devices (Private Repository)
 
-Tray sessions from one device can be opened on another through a private repository. Each session is saved as one markdown file (`projects/<project>/sessions/*.md`) and exchanged with git. Neither the config nor any session goes into this public repository.
+Tray sessions from one device can be opened on another through a private repository. Each session is saved as one markdown file (`projects/<shared-folder>/sessions/*.md`) and exchanged with git. Neither the config nor any session goes into this public repository.
 
 ### Setup (once per device)
 
@@ -152,11 +152,12 @@ Tray sessions from one device can be opened on another through a private reposit
 
 ### How it behaves
 
-- The shared folder follows the current **project name**, e.g. `Context Boradori` → `projects/context-boradori/sessions`.
+- The shared folder comes from the **Shared folder** field in the share box and defaults to `context-boradori` (→ `projects/context-boradori/sessions`). Changing the project name or UI language does not change it; edit the field to use another folder. The value is kept in this browser.
 - Each session carries the name of the device that first shared it, shown in the tray and the session map.
-- Existing files are never overwritten, so a session edited by hand in the private repository keeps the edit. Files with broken markers are skipped.
+- Existing files are never overwritten, so a session edited by hand in the private repository keeps the edit.
+- Files with broken markers or a newer `format` version are skipped, and the sync message says "Could not read N files". The terminal running `npm run local` lists their names.
 - Deleting a session from the tray does not delete it from the shared folder. To remove it everywhere, delete the file and run `npm run sync`.
-- Raw context is never stored, only the organized result, and API key/token patterns are redacted once more before saving.
+- Raw context is never stored, only the organized result, and API key, token, and password patterns (GitHub/AWS/Slack tokens, JWTs, `password=`, and more) are redacted once more before saving.
 - The sharing API is only on when the local server has `.boradori/config.json`, and it only accepts requests from the app at the same address.
 - The tray keeps the latest 40 sessions.
 
@@ -175,6 +176,7 @@ Useful checks:
 
 ```bash
 npm run lint
+npm test
 npm run build
 npm audit --omit=dev
 ```
