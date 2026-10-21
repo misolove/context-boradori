@@ -51,12 +51,12 @@ Initial screen-first MVP is implemented, deployed, updated with generated brand 
 - Mock compression heuristics now avoid treating `Next.js` as a next action, avoid classifying proposal-prefixed lines as confirmed decisions, and remove English fallback text from merged handoffs.
 - Mobile layout is tightened so the common-context map starts inside a 390x844 first viewport and appears before the editable north-star textarea.
 - Hackathon presentation materials are available under `presentation/`.
-- The current PPTX is `presentation/output/output.pptx`, synced from the Claude-polished deck at `/Users/letitbe/Downloads/맥락보라돌이_해커톤_데모덱.pptx`.
+- The current PPTX is `presentation/output/output.pptx`, synced from the Claude-polished deck `맥락보라돌이_해커톤_데모덱.pptx` (a local copy kept outside the repo).
 - The current deck has 10 slides covering problem, solution, product flow, live demo proof, usefulness, tech/safety, roadmap, closing, and future expansion.
 - Presentation previews and a contact sheet remain available under `presentation/scratch/previews/`, but they were generated before the Claude-polished PPTX sync.
 - The Claude-polished PPTX package was extended with a final `08 · EXPANSION` slide covering handoff quality, memory/map improvements, and integrations.
 - The PPTX package was verified with `unzip -t`; it has 10 slides, 31 media files, 0 zero-byte media files, and no compressed data errors.
-- Backup demo video with Korean/English hard subtitles was generated at `/Users/letitbe/Desktop/context-boradori-demo-subtitled.mp4`.
+- Backup demo video with Korean/English hard subtitles was generated as `context-boradori-demo-subtitled.mp4` (kept outside the repo).
 - A Mermaid session map (`src/components/SessionMap.tsx`, `src/lib/sessionMap.ts`) appears below the common tray once sessions exist. Sessions are grouped by source tool in collection order and all point to a shared-context hub that names the target tool.
 - Clicking a session node (or a tray title) opens a quick peek with that session's decisions, questions, and actions; "전체 결과 보기" scrolls to the per-session result panel, which is now titled with the session name.
 - Tray cards show a session gist (first concrete decision/action/idea/question) and counts instead of the repeated summary boilerplate.

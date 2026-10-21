@@ -1,6 +1,6 @@
 {
-  "workspace": "/Users/letitbe/context-boradori/presentation",
-  "pptx": "/Users/letitbe/context-boradori/presentation/output/output.pptx",
+  "workspace": "presentation",
+  "pptx": "presentation/output/output.pptx",
   "checks": {
     "pptx_package": {
       "slide_count": 9,
@@ -15,7 +15,7 @@
       "failures": []
     },
     "output_hygiene": {
-      "output_dir": "/Users/letitbe/context-boradori/presentation/output",
+      "output_dir": "presentation/output",
       "unexpected_files": []
     }
   },

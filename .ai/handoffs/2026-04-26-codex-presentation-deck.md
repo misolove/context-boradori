@@ -42,7 +42,7 @@ Created a Korean-first presentation deck for hackathon submission and live demo 
 ## Tests/checks run
 
 - `node src/deck.mjs`
-- `node /Users/letitbe/.codex/plugins/cache/openai-primary-runtime/presentations/26.423.10653/skills/presentations/scripts/check_presentation_quality.js --workspace /Users/letitbe/context-boradori/presentation --pptx /Users/letitbe/context-boradori/presentation/output/output.pptx --report /Users/letitbe/context-boradori/presentation/scratch/reports/quality-report.json`
+- `node <codex-presentations-skill>/scripts/check_presentation_quality.js --workspace presentation --pptx presentation/output/output.pptx --report presentation/scratch/reports/quality-report.json`
 - `unzip -l presentation/output/output.pptx 'ppt/media/*'`
 - `ffmpeg` contact-sheet generation from exported slide previews
 - Manual PNG inspection of `presentation/scratch/previews/contact-sheet.png`
