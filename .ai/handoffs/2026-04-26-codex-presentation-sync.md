@@ -19,7 +19,7 @@ Reflected the Claude-polished hackathon presentation deck into the repository af
 
 ## 4. Tests/checks run
 
-- Compared the repo PPTX against `/Users/letitbe/Downloads/맥락보라돌이_해커톤_데모덱.pptx` with `cmp`; files matched.
+- Compared the repo PPTX against the local Claude-polished copy `맥락보라돌이_해커톤_데모덱.pptx` (outside the repo) with `cmp`; files matched.
 - Ran `unzip -t presentation/output/output.pptx`; no compressed data errors.
 - Inspected PPTX package contents: 9 slides, 31 media files, 0 zero-byte media files.
 - Checked `git diff --stat`.
