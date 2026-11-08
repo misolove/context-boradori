@@ -111,12 +111,17 @@ export const uiText = {
         `${tool} · ${time}에 수집한 세션의 mock 정리본입니다.`,
       openSession: (title: string) => `${title} 세션 열기`,
       sharedLabel: "기기 간 공유",
-      sharedDescription: (folder: string, device: string) =>
-        `비공개 저장소의 ${folder} 폴더와 수집함을 맞춥니다. 이 기기: ${device}`,
+      sharedDescription: (device: string) =>
+        `비공개 저장소의 공유 폴더와 수집함을 맞춥니다. 이 기기: ${device}`,
+      sharedFolderLabel: "공유 폴더",
+      sharedFolderHelp: (folder: string) =>
+        `${folder}에 저장합니다. 프로젝트 이름이나 화면 언어를 바꿔도 폴더는 그대로입니다.`,
       syncButton: "공유 폴더와 동기화",
       syncing: "동기화 중…",
       syncDone: (written: number, incoming: number) =>
         `${written}개 저장 · ${incoming}개 새로 불러옴. 다른 기기와 주고받으려면 터미널에서 npm run sync를 실행하세요.`,
+      syncSkipped: (skipped: number) =>
+        `파일 ${skipped}개를 읽지 못했습니다. 손상되었거나 더 새 버전의 앱이 만든 파일일 수 있습니다. 파일 이름은 앱을 실행한 터미널에 나옵니다.`,
       syncError:
         "동기화하지 못했습니다. .boradori/config.json의 저장소 경로를 확인하세요.",
     },
@@ -285,12 +290,17 @@ export const uiText = {
         `Mock summary of the session collected from ${tool} at ${time}.`,
       openSession: (title: string) => `Open session ${title}`,
       sharedLabel: "Share across devices",
-      sharedDescription: (folder: string, device: string) =>
-        `Syncs the tray with ${folder} in the private repository. This device: ${device}`,
+      sharedDescription: (device: string) =>
+        `Syncs the tray with the shared folder in the private repository. This device: ${device}`,
+      sharedFolderLabel: "Shared folder",
+      sharedFolderHelp: (folder: string) =>
+        `Saves to ${folder}. Changing the project name or UI language keeps this folder.`,
       syncButton: "Sync with shared folder",
       syncing: "Syncing…",
       syncDone: (written: number, incoming: number) =>
         `${written} saved · ${incoming} new loaded. Run npm run sync in a terminal to exchange with other devices.`,
+      syncSkipped: (skipped: number) =>
+        `Could not read ${skipped} ${skipped === 1 ? "file" : "files"}. They may be damaged or made by a newer version of the app. The terminal running the app lists their names.`,
       syncError:
         "Could not sync. Check the repository path in .boradori/config.json.",
     },

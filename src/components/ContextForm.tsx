@@ -13,14 +13,22 @@ import {
 } from "@/lib/compression";
 import type { Locale } from "@/lib/i18n";
 import { uiText } from "@/lib/i18n";
-import { sessionFolder } from "@/lib/sessionFiles";
+import { projectSlug, sessionFolder } from "@/lib/sessionFiles";
 import { digestPieces, formatCreatedAt } from "@/lib/sessionMap";
 
 const STORAGE_KEY = "context-boradori-context-pieces-v1";
 const MAX_TRAY_PIECES = 40;
 const SYNC_HEADERS = { "x-boradori-sync": "1" };
 const NORTH_STAR_STORAGE_KEY = "context-boradori-north-star-v1";
+const SHARE_FOLDER_STORAGE_KEY = "context-boradori-share-folder-v1";
 const locales: Locale[] = ["ko", "en"];
+// The language toggle swaps these, so the shared folder is never derived
+// from the project name; it is stored on its own and starts from this slug.
+const defaultProjectNames: Record<Locale, string> = {
+  ko: "맥락 보라돌이",
+  en: "Context Boradori",
+};
+const DEFAULT_SHARE_FOLDER = projectSlug(defaultProjectNames.en);
 const defaultNorthStars: Record<Locale, string> = {
   ko: uiText.ko.context.defaultNorthStar,
   en: uiText.en.context.defaultNorthStar,
@@ -187,7 +195,7 @@ type ContextFormProps = {
 export function ContextForm({ locale }: ContextFormProps) {
   const text = uiText[locale].context;
   const numberLocale = locale === "ko" ? "ko-KR" : "en-US";
-  const [projectName, setProjectName] = useState("맥락 보라돌이");
+  const [projectName, setProjectName] = useState(defaultProjectNames.ko);
   const [sourceTool, setSourceTool] = useState<SourceTool>("Codex");
   const [targetTool, setTargetTool] = useState<SourceTool>("Codex");
   const [projectNorthStars, setProjectNorthStars] =
@@ -201,10 +209,12 @@ export function ContextForm({ locale }: ContextFormProps) {
   const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
   const [scrollToPieceRequest, setScrollToPieceRequest] = useState(0);
   const [sharedDevice, setSharedDevice] = useState<string | null>(null);
+  const [shareFolder, setShareFolder] = useState(DEFAULT_SHARE_FOLDER);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<{
     text: string;
     isError: boolean;
+    warning?: string;
   } | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
   const pieceResultRef = useRef<HTMLDivElement>(null);
@@ -230,6 +240,7 @@ export function ContextForm({ locale }: ContextFormProps) {
     : undefined;
   const projectNorthStar = projectNorthStars[locale];
   const effectiveNorthStar = projectNorthStar.trim() || text.defaultNorthStar;
+  const shareFolderSlug = shareFolder.trim() ? projectSlug(shareFolder) : "";
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -265,6 +276,14 @@ export function ContextForm({ locale }: ContextFormProps) {
           ...current,
           ...storedNorthStars,
         }));
+
+        const storedShareFolder = window.localStorage.getItem(
+          SHARE_FOLDER_STORAGE_KEY,
+        );
+
+        if (storedShareFolder?.trim()) {
+          setShareFolder(projectSlug(storedShareFolder));
+        }
       } catch {
         window.localStorage.removeItem(STORAGE_KEY);
       } finally {
@@ -277,17 +296,11 @@ export function ContextForm({ locale }: ContextFormProps) {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      setProjectName((currentProjectName) => {
-        if (locale === "en" && currentProjectName === "맥락 보라돌이") {
-          return "Context Boradori";
-        }
-
-        if (locale === "ko" && currentProjectName === "Context Boradori") {
-          return "맥락 보라돌이";
-        }
-
-        return currentProjectName;
-      });
+      setProjectName((currentProjectName) =>
+        Object.values(defaultProjectNames).includes(currentProjectName)
+          ? defaultProjectNames[locale]
+          : currentProjectName,
+      );
     }, 0);
 
     return () => window.clearTimeout(timer);
@@ -326,6 +339,18 @@ export function ContextForm({ locale }: ContextFormProps) {
       window.localStorage.removeItem(northStarStorageKey);
     }
   }, [projectNorthStar, isHydrated, locale]);
+
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(SHARE_FOLDER_STORAGE_KEY, shareFolderSlug);
+    } catch {
+      window.localStorage.removeItem(SHARE_FOLDER_STORAGE_KEY);
+    }
+  }, [shareFolderSlug, isHydrated]);
 
   // Session sharing is only on when the local server has .boradori/config.json;
   // the public demo answers 403 and the controls stay hidden.
@@ -442,7 +467,11 @@ export function ContextForm({ locale }: ContextFormProps) {
       const response = await fetch("/api/sessions", {
         method: "POST",
         headers: { ...SYNC_HEADERS, "content-type": "application/json" },
-        body: JSON.stringify({ projectName, pieces: contextPieces }),
+        body: JSON.stringify({
+          projectName,
+          folder: shareFolderSlug,
+          pieces: contextPieces,
+        }),
       });
 
       if (!response.ok) {
@@ -451,6 +480,7 @@ export function ContextForm({ locale }: ContextFormProps) {
 
       const data = (await response.json()) as {
         written: number;
+        skipped: number;
         pieces: unknown[];
       };
       const shared = data.pieces.filter(isStoredContextPiece);
@@ -468,6 +498,7 @@ export function ContextForm({ locale }: ContextFormProps) {
       setSyncMessage({
         text: text.syncDone(data.written, incoming.length),
         isError: false,
+        warning: data.skipped > 0 ? text.syncSkipped(data.skipped) : undefined,
       });
     } catch {
       setSyncMessage({ text: text.syncError, isError: true });
@@ -792,30 +823,54 @@ export function ContextForm({ locale }: ContextFormProps) {
                       {text.sharedLabel}
                     </p>
                     <p className="text-xs leading-5 text-[#6B6B7B]">
-                      {text.sharedDescription(
-                        sessionFolder(projectName),
-                        sharedDevice,
-                      )}
+                      {text.sharedDescription(sharedDevice)}
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={handleSyncSessions}
-                    disabled={isSyncing || !projectName.trim()}
+                    disabled={
+                      isSyncing || !projectName.trim() || !shareFolderSlug
+                    }
                     className="h-10 shrink-0 rounded-lg border border-[#8A5CF6] bg-[#F5F1FF] px-4 text-sm font-bold text-[#3b168c] transition hover:bg-[#EDE5FF] disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-4 focus:ring-[#B094FF]/30"
                   >
                     {isSyncing ? text.syncing : text.syncButton}
                   </button>
                 </div>
+                <label className="block space-y-1">
+                  <span className="text-xs font-semibold text-[#3b168c]">
+                    {text.sharedFolderLabel}
+                  </span>
+                  <input
+                    value={shareFolder}
+                    onChange={(event) => setShareFolder(event.target.value)}
+                    onBlur={() => setShareFolder(shareFolderSlug)}
+                    spellCheck={false}
+                    className="h-9 w-full rounded-lg border border-[#E6E0FF] bg-[#FCFAFF] px-3 font-mono text-xs text-[#333333] outline-none transition focus:border-[#8A5CF6] focus:bg-white focus:ring-4 focus:ring-[#B094FF]/25"
+                  />
+                  <span className="block text-xs leading-5 text-[#6B6B7B]">
+                    {text.sharedFolderHelp(
+                      sessionFolder(shareFolderSlug || "…"),
+                    )}
+                  </span>
+                </label>
                 {syncMessage ? (
-                  <p
-                    className={`text-xs leading-5 ${
-                      syncMessage.isError ? "text-[#9F1239]" : "text-[#126B42]"
-                    }`}
-                    aria-live="polite"
-                  >
-                    {syncMessage.text}
-                  </p>
+                  <div aria-live="polite" className="space-y-1">
+                    <p
+                      className={`text-xs leading-5 ${
+                        syncMessage.isError
+                          ? "text-[#9F1239]"
+                          : "text-[#126B42]"
+                      }`}
+                    >
+                      {syncMessage.text}
+                    </p>
+                    {syncMessage.warning ? (
+                      <p className="text-xs font-semibold leading-5 text-[#9F1239]">
+                        {syncMessage.warning}
+                      </p>
+                    ) : null}
+                  </div>
                 ) : null}
               </div>
             ) : null}

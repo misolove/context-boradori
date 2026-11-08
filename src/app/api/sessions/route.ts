@@ -4,6 +4,7 @@ import type { CompressionCore, ContextPiece } from "@/lib/compression";
 import { loadBoradoriConfig } from "@/lib/server/boradoriConfig";
 import {
   MAX_SESSION_TEXT,
+  isValidFolderSlug,
   isValidPieceId,
   parseSessionFile,
   serializeSessionFile,
@@ -76,34 +77,54 @@ function toSharablePiece(value: unknown): ContextPiece | null {
   return piece as ContextPiece;
 }
 
+async function readFileOrNull(file: string) {
+  try {
+    return await readFile(file, "utf8");
+  } catch {
+    return null;
+  }
+}
+
+// Every .md file that cannot be read as a session is counted and named in
+// the server log, so a broken or newer-format file is never skipped silently.
 async function readSessions(directory: string) {
   let names: string[];
 
   try {
     names = await readdir(directory);
   } catch {
-    return [];
+    return { pieces: [], skipped: [] };
   }
 
   const pieces: ContextPiece[] = [];
+  const skipped: string[] = [];
 
   for (const name of names.filter((entry) => entry.endsWith(".md"))) {
-    const text = await readFile(path.join(directory, name), "utf8");
-
-    if (text.length > MAX_SESSION_FILE_BYTES) {
-      continue;
-    }
-
-    const piece = parseSessionFile(text);
+    const text = await readFileOrNull(path.join(directory, name));
+    const piece =
+      text !== null && text.length <= MAX_SESSION_FILE_BYTES
+        ? parseSessionFile(text)
+        : null;
 
     if (piece) {
       pieces.push(piece);
+    } else {
+      skipped.push(name);
     }
   }
 
-  return pieces.sort(
-    (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt) || 0,
-  );
+  if (skipped.length > 0) {
+    console.warn(
+      `[boradori] skipped ${skipped.length} unreadable session file(s) in ${directory}: ${skipped.join(", ")}`,
+    );
+  }
+
+  return {
+    pieces: pieces.sort(
+      (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt) || 0,
+    ),
+    skipped,
+  };
 }
 
 export async function GET(request: Request) {
@@ -120,7 +141,9 @@ export async function GET(request: Request) {
 
 // Writes local pieces that the shared folder does not have yet, then returns
 // every session in the folder. Existing files are never overwritten, so a
-// session edited in the private repo stays as edited.
+// session edited in the private repo stays as edited. The folder slug comes
+// from the client and is kept apart from the display name, which changes
+// with the UI language.
 export async function POST(request: Request) {
   if (!isTrustedLocalRequest(request)) {
     return Response.json({ error: "forbidden" }, { status: 403 });
@@ -132,7 +155,7 @@ export async function POST(request: Request) {
     return Response.json({ enabled: false }, { status: 404 });
   }
 
-  let body: { projectName?: unknown; pieces?: unknown };
+  let body: { projectName?: unknown; folder?: unknown; pieces?: unknown };
 
   try {
     body = await request.json();
@@ -146,13 +169,15 @@ export async function POST(request: Request) {
   if (
     !projectName ||
     projectName.length > 120 ||
+    typeof body.folder !== "string" ||
+    !isValidFolderSlug(body.folder) ||
     !Array.isArray(body.pieces) ||
     body.pieces.length > MAX_PIECES_PER_SYNC
   ) {
     return Response.json({ error: "invalid request" }, { status: 400 });
   }
 
-  const folder = sessionFolder(projectName);
+  const folder = sessionFolder(body.folder);
   const directory = path.resolve(config.workspacePath, folder);
 
   if (!directory.startsWith(config.workspacePath + path.sep)) {
@@ -186,11 +211,14 @@ export async function POST(request: Request) {
     }
   }
 
+  const { pieces, skipped } = await readSessions(directory);
+
   return Response.json({
     enabled: true,
     device: config.deviceName,
     folder,
     written,
-    pieces: await readSessions(directory),
+    skipped: skipped.length,
+    pieces,
   });
 }

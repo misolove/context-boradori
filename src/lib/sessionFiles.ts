@@ -13,10 +13,13 @@ import {
 import { redactSensitiveText } from "@/lib/security";
 
 // One shared session = one markdown file in the private memory workspace:
-// projects/<project-slug>/sessions/<created>-<tool>-<id>.md
+// projects/<folder-slug>/sessions/<created>-<tool>-<id>.md
 // Only the compression core is stored; exports are rebuilt on import.
 
 export const SESSION_FILE_TYPE = "boradori-session";
+// Bump when the file layout changes. Files without `format` are version 1,
+// and a newer version is skipped so an old app never misreads it.
+export const SESSION_FILE_FORMAT = 1;
 export const MAX_SESSION_TEXT = 50_000;
 
 const coreSections: Array<{ key: keyof CompressionCore; title: string }> = [
@@ -39,20 +42,27 @@ export function isValidDeviceName(name: string) {
   return deviceNamePattern.test(name);
 }
 
+// Marks (\p{M}) are kept so scripts such as Devanagari are not split up.
+// Cutting to length happens before trimming dashes, so a slug never ends in
+// one and slugging a slug returns it unchanged.
 export function projectSlug(projectName: string) {
   const slug = projectName
     .normalize("NFC")
     .trim()
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60);
+    .replace(/[^\p{L}\p{M}\p{N}]+/gu, "-")
+    .slice(0, 60)
+    .replace(/^-+|-+$/g, "");
 
   return slug || "untitled-project";
 }
 
-export function sessionFolder(projectName: string) {
-  return `projects/${projectSlug(projectName)}/sessions`;
+export function isValidFolderSlug(folder: string) {
+  return folder === projectSlug(folder);
+}
+
+export function sessionFolder(folderSlug: string) {
+  return `projects/${folderSlug}/sessions`;
 }
 
 export function sessionFileName(piece: ContextPiece) {
@@ -98,6 +108,7 @@ export function serializeSessionFile(
   const lines = [
     "---",
     frontmatterLine("type", SESSION_FILE_TYPE),
+    frontmatterLine("format", SESSION_FILE_FORMAT),
     frontmatterLine("id", piece.id),
     frontmatterLine("title", redactSensitiveText(piece.title)),
     frontmatterLine("project", projectName),
@@ -173,6 +184,7 @@ export function parseSessionFile(text: string): ContextPiece | null {
   if (
     !meta ||
     meta.type !== SESSION_FILE_TYPE ||
+    (meta.format ?? 1) !== SESSION_FILE_FORMAT ||
     typeof meta.id !== "string" ||
     !isValidPieceId(meta.id) ||
     typeof meta.title !== "string" ||
